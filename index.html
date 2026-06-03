@@ -628,11 +628,14 @@ function renderCal(){
   for(let day=1;day<=last.getDate();day++){
     const ds=calY+'-'+pad(calM+1)+'-'+pad(day);
     const d=new Date(calY,calM,day);
+    const dayMs=d.getTime();
     const haEv=S.apts.some(a=>{
       if(a.datetime.startsWith(ds))return true;
       const ad=new Date(a.datetime);
       if(a.recurrence==='yearly'&&ad.getMonth()===calM&&ad.getDate()===day)return true;
       if(a.recurrence==='weekly'&&ad.getDay()===d.getDay())return true;
+      // Multi-day: check if this day falls within event range
+      if(a.endDatetime){const ed=new Date(a.endDatetime);if(ad<=d&&ed>=d)return true;}
       return false;
     });
     const isTd=ds===todayStr(),isSl=calSel===ds;
@@ -657,7 +660,10 @@ function renderCalDetail(){
   else evts.forEach(a=>{
     const dt=new Date(a.datetime);
     const rl=a.recurrence==='yearly'?'🔁 Jährlich':a.recurrence==='weekly'?'🔁 Wöchentlich':a.recurrence==='monthly'?'🔁 Monatlich':'';
-    h+=`<div class="cal-ev"><div class="cal-ev-time">${pad(dt.getHours())}:${pad(dt.getMinutes())}</div><div><div class="cal-ev-title">${a.title}</div>${a.person?'<div class="cal-ev-sub">👤 '+a.person+'</div>':''}${rl?'<div class="cal-ev-recur">'+rl+'</div>':''}</div></div>`;
+    const isMulti=a.endDatetime&&a.endDatetime!==a.datetime;
+    const timeStr=isMulti?'Mehrtägig':pad(dt.getHours())+':'+pad(dt.getMinutes());
+    const endStr=isMulti?' bis '+new Date(a.endDatetime).toLocaleDateString('de-DE',{day:'numeric',month:'short'}):'';
+    h+=`<div class="cal-ev"><div class="cal-ev-time" style="${isMulti?'font-size:11px;color:var(--amb);font-weight:600':''}${isMulti?'':''}">${timeStr}</div><div><div class="cal-ev-title">${a.title}${endStr?'<span style="font-size:11px;color:var(--amb);margin-left:6px">'+endStr+'</span>':''}</div>${a.person?'<div class="cal-ev-sub">👤 '+a.person+'</div>':''}${rl?'<div class="cal-ev-recur">'+rl+'</div>':''}</div></div>`;
   });
   document.getElementById('cal-detail').innerHTML=h;
 }
@@ -682,36 +688,427 @@ function stopVoice(){
   document.getElementById('vlbl').textContent='Tippen zum Starten';
 }
 
-// CLASSIFY
+// CLASSIFY & PROCESS
+// ─────────────────────────────────────────────
+// Design principle: classify by what people ACTUALLY say in daily life.
+// Examples used to build these rules:
+//
+// TODOS (one-time, concrete, soon):
+//   "Ich muss meine Schwester vom Fußball abholen"
+//   "Wäsche waschen nicht vergessen"
+//   "Kurz beim Supermarkt vorbeischauen"
+//   "Mama anrufen"
+//   "Arztrezept abholen"
+//   "Auto zur Werkstatt bringen"
+//   "Paket aufgeben"
+//   "Kühlschrank auffüllen"
+//
+// APPOINTMENTS (specific date/time, event):
+//   "Ich habe morgen einen Geschäftstermin mit Herrn Müller um 10 Uhr im Büro"
+//   "Am 3.7. um 15:30 Physiktest"
+//   "Nächsten Montag Zahnarzt um 14 Uhr"
+//   "Geburtstag meines Vaters am 15. August jährlich"
+//   "Freitag 18 Uhr Fußballtraining"
+//   "Konferenz am Dienstag 9 Uhr morgens in München"
+//   "Vorstellungsgespräch am 20. Juni 10 Uhr"
+//
+// GOALS (recurring habit, long-term improvement):
+//   "Ich möchte 10.000 Euro sparen"
+//   "5x die Woche trainieren"
+//   "Täglich 10 Minuten meditieren"
+//   "Ich will abnehmen"
+//   "Mehr Bücher lesen"
+//   "Jeden Morgen 20 Liegestütze"
+//
+// CHECK-OFF:
+//   "Ich habe heute trainiert"
+//   "Wäsche ist fertig"
+//   "500 Euro gespart diese Woche"
+
 let convState=null,pTitle='',pArea='',pendingAptTitle='',pendingAptDt=null;
 
-// Keywords that strongly indicate a birthday/appointment even without explicit "termin"
-const BIRTHDAY_RE=/geburtstag|jahrestag|jubiläum/i;
-const APT_INDICATORS=/termin|prüfung|test|meeting|arzt|zahnarzt|untersuchung|vorstellung|bewerbung|flug|abfahrt|zug|bahn/i;
+// ── STRONG APPOINTMENT SIGNALS ──────────────────
+const APT_STRONG = [
+  /termin/i,
+  /meeting/i,
+  /konferenz/i,
+  /besprechung/i,
+  /vorstellungsgespräch/i,
+  /bewerbungsgespräch/i,
+  /prüfung/i,
+  /klausur/i,
+  /test\b/i,
+  /zahnarzt/i,
+  /arzt/i,
+  /untersuchung/i,
+  /operation/i,
+  /flug/i,
+  /abflug/i,
+  /zug\b/i,
+  /bahnfahrt/i,
+  /geburtstag/i,
+  /jahrestag/i,
+  /jubiläum/i,
+  /hochzeit/i,
+  /feier/i,
+  /party/i,
+  /fußballtraining/i,
+  /training\b/i,
+  /kurs\b/i,
+  /workshop/i,
+  /seminar/i,
+  /veranstaltung/i,
+  /geschäftstermin/i,
+  /kundengespräch/i,
+  /urlaub/i,
+  /reise/i,
+  /ausflug/i,
+  /trip/i,
+  /wochenende/i,
+  /kurzurlaub/i,
+  /familienfeier/i,
+  /hochzeitsfeier/i,
+];
 
-function handleInput(txt){
-  showAI('user',txt);document.getElementById('aiArea').classList.add('show');
-  if(convState){handleConvReply(txt);return;}
-  const l=txt.toLowerCase();
-  if(/was steht|was hab ich|was muss ich|überblick|zusammenfassung/.test(l)){giveTodaySummary();return;}
-  // Check-off
-  const doneP=[/hab(e)?\s+.+?\s+(gemacht|erledigt|fertig|gewaschen|trainiert|gelaufen|gespart|gelesen|gekauft|geputzt|gebucht)/i,/.+?\s+ist\s+(fertig|erledigt|gemacht)/i];
-  for(const p of doneP)if(txt.match(p)){checkOffByVoice(txt);return;}
-  // Money update
-  if(/(\d+)\s*(euro|€)/i.test(l)&&/gespart|zur seite|beiseite|gesetzt|eingespart/.test(l)){updateMoneyGoal(txt);return;}
-  // Has explicit date+time = apt
-  const hasDate=/\d{1,2}[.\-\/]\d{1,2}|\b(ersten|zweiten|dritten|vierten|fünften|sechsten|siebten|achten|neunten|zehnten|elften|zwölften|dreizehnten|vierzehnten|fünfzehnten|sechzehnten|siebzehnten|achtzehnten|neunzehnten|zwanzigsten|einundzwanzigsten|zweiundzwanzigsten|dreiundzwanzigsten|vierundzwanzigsten|fünfundzwanzigsten|sechsundzwanzigsten|siebenundzwanzigsten|achtundzwanzigsten|neunundzwanzigsten|dreißigsten|einunddreißigsten)\b/.test(l);
-  const hasDayName=/\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/.test(l);
-  const hasTime=/\d{1,2}[:.]\d{2}|\d{1,2}\s*uhr/.test(l);
-  const isBirthday=BIRTHDAY_RE.test(l);
-  const isAptKeyword=APT_INDICATORS.test(l);
-  const isApt=(isBirthday||(hasDate&&(hasTime||isAptKeyword))||(hasDayName&&hasTime)||((hasDate||hasDayName)&&isAptKeyword))&&!/ich will|ich möchte|täglich|jede woche|mal die woche/.test(l);
-  // Concrete one-time task
-  const isConcreteTask=/abhole|abfahr|kaufe|ruf |treffe |besuche |bring |hole |fahr |geh zu|gehe zu|aufgabe/.test(l);
-  const isTodo=(isConcreteTask||/muss heute|soll heute|heute noch|erledige|vergiss|wäsche|einkauf/.test(l))&&!isApt&&!/ich will|ich möchte|täglich|mal die woche/.test(l);
-  if(isApt)startAptConv(txt);
-  else if(isTodo)processTodo(txt);
-  else startGoalConv(txt);
+// ── STRONG TODO SIGNALS ──────────────────────────
+const TODO_STRONG = [
+  /^ich muss\b/i,
+  /^ich soll\b/i,
+  /nicht vergessen/i,
+  /vergiss nicht/i,
+  /noch (kurz |schnell )?/i,
+  /abholen/i,
+  /aufgeben/i,
+  /abgeben/i,
+  /einreichen/i,
+  /vorbeischauen/i,
+  /vorbeigehen/i,
+  /anrufen/i,
+  /zurückrufen/i,
+  /schreiben an/i,
+  /nachricht schicken/i,
+  /erledigen/i,
+  /kaufen/i,
+  /besorgen/i,
+  /holen/i,
+  /bringen/i,
+  /aufräumen/i,
+  /putzen/i,
+  /waschen/i,
+  /bezahlen/i,
+  /überweisen/i,
+  /buchen/i,
+  /reservieren/i,
+  /reparieren/i,
+  /ausfüllen/i,
+  /ausdrucken/i,
+];
+
+// ── STRONG GOAL SIGNALS ──────────────────────────
+const GOAL_STRONG = [
+  /ich (will|möchte|wünsche mir|strebe an|nehme mir vor)/i,
+  /mein ziel/i,
+  /täglich\b/i,
+  /jeden tag/i,
+  /jede woche/i,
+  /\d+\s*x\s*(die\s*)?(woche|tag|monat)/i,
+  /\d+\s*mal\s*(die\s*)?(woche|tag|monat)/i,
+  /pro woche/i,
+  /pro tag/i,
+  /regelmäßig/i,
+  /zur gewohnheit/i,
+  /langfristig/i,
+];
+
+// ── MONEY GOAL SIGNALS ───────────────────────────
+const MONEY_GOAL = [
+  /(\d[\d.,]*)\s*(euro|€|tausend euro|\d+k)/i,
+  /geld sparen/i,
+  /sparen/i,
+];
+
+// ── CHECK-OFF SIGNALS ────────────────────────────
+const CHECKOFF = [
+  /hab(e)?\s+.+\s+(gemacht|erledigt|fertig|gewaschen|trainiert|gelaufen|gespart|gelesen|gekauft|geputzt|gebucht|aufgeräumt|abgeholt|eingereicht|abgegeben)/i,
+  /bin\s+(gelaufen|gefahren|gewesen|gegangen)/i,
+  /.+\s+ist\s+(fertig|erledigt|gemacht|erledigt)/i,
+  /habe\s+heute\s+/i,
+];
+
+// ── MONEY UPDATE SIGNALS ─────────────────────────
+const MONEY_UPDATE = [
+  /(\d[\d.,]*)\s*(euro|€)\s*(gespart|zur seite|beiseite|eingespart|zurückgelegt)/i,
+  /(gespart|zur seite gelegt|beiseite gelegt)\s*[:,]?\s*(\d[\d.,]*)\s*(euro|€)/i,
+];
+
+// ── QUERY SIGNALS ────────────────────────────────
+const QUERY = [
+  /was steht (heute|an|auf)/i,
+  /was hab ich heute/i,
+  /was muss ich (heute|noch)/i,
+  /zeig mir (heute|alles|meine)/i,
+  /überblick/i,
+  /zusammenfassung/i,
+];
+
+function hasDate(txt) {
+  const l = txt.toLowerCase();
+  return (
+    /\d{1,2}[.\-\/]\d{1,2}/.test(txt) ||
+    /\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/.test(l) ||
+    /\b(morgen|übermorgen|heute abend|heute nachmittag)\b/.test(l) ||
+    /\b(januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember)\b/.test(l) ||
+    /\b(nächste[rn]?\s+(montag|dienstag|mittwoch|donnerstag|freitag|woche))\b/.test(l) ||
+    /\b(am\s+\d{1,2}\.)\b/.test(l) ||
+    /\b(dritten|vierten|fünften|sechsten|siebten|achten|neunten|zehnten|elften|zwölften|dreizehnten|vierzehnten|fünfzehnten|sechzehnten|siebzehnten|achtzehnten|neunzehnten|zwanzigsten|einundzwanzigsten|zweiundzwanzigsten|dreiundzwanzigsten|vierundzwanzigsten|fünfundzwanzigsten|sechsundzwanzigsten|siebenundzwanzigsten|achtundzwanzigsten|neunundzwanzigsten|dreißigsten|einunddreißigsten|ersten|zweiten)\b/.test(l)
+  );
+}
+
+function hasTime(txt) {
+  return /\d{1,2}[:.]\d{2}|\d{1,2}\s*uhr\b/.test(txt.toLowerCase());
+}
+
+function matchesAny(txt, patterns) {
+  return patterns.some(p => p.test(txt));
+}
+
+function classify(txt) {
+  const l = txt.toLowerCase();
+
+  // 1. Query
+  if (matchesAny(txt, QUERY)) { giveTodaySummary(); return; }
+
+  // 2. Check-off ("ich habe heute trainiert")
+  if (matchesAny(txt, CHECKOFF)) { checkOffByVoice(txt); return; }
+
+  // 3. Money update ("500 Euro gespart")
+  if (matchesAny(txt, MONEY_UPDATE)) { updateMoneyGoal(txt); return; }
+
+  // 4. Score-based classification
+  let aptScore = 0, todoScore = 0, goalScore = 0;
+
+  // Appointment scoring
+  APT_STRONG.forEach(p => { if (p.test(txt)) aptScore += 3; });
+  if (hasDate(txt)) aptScore += 2;
+  if (hasTime(txt)) aptScore += 2;
+  // "mit [Name]" at appointment context
+  if (/mit (herrn?|frau|dr\.?|prof\.?|[A-ZÄÖÜ][a-zäöü]+)/i.test(txt)) aptScore += 2;
+  // Ort/location clue
+  if (/\b(in|im|am|beim?|bei der)\s+[A-ZÄÖÜ]/i.test(txt)) aptScore += 1;
+
+  // Todo scoring
+  TODO_STRONG.forEach(p => { if (p.test(txt)) todoScore += 3; });
+  // Short concrete action verbs without date
+  if (!hasDate(txt) && !hasTime(txt)) todoScore += 1;
+  // "heute" without time = todo
+  if (/\bheute\b/i.test(l) && !hasTime(txt) && !matchesAny(txt, APT_STRONG)) todoScore += 2;
+
+  // Goal scoring
+  GOAL_STRONG.forEach(p => { if (p.test(txt)) goalScore += 3; });
+  MONEY_GOAL.forEach(p => { if (p.test(txt)) goalScore += 2; });
+  // "ich will/möchte X sparen/abnehmen/trainieren..." = strong goal
+  if (/ich (will|möchte)\s+\d/i.test(txt)) goalScore += 2;
+
+  // Disambiguation: if appointment keyword exists, it dominates
+  if (aptScore >= 3 && aptScore > todoScore && aptScore > goalScore) {
+    startAptConv(txt); return;
+  }
+  if (todoScore > goalScore && todoScore >= 3) {
+    processTodo(txt); return;
+  }
+  if (goalScore >= todoScore) {
+    startGoalConv(txt); return;
+  }
+
+  // Fallback: short with no date/time = todo, otherwise ask
+  if (!hasDate(txt) && !hasTime(txt) && txt.split(' ').length <= 8) {
+    processTodo(txt);
+  } else if (hasDate(txt) || hasTime(txt)) {
+    startAptConv(txt);
+  } else {
+    startGoalConv(txt);
+  }
+}
+
+async function handleInput(txt) {
+  showAI('user', txt);
+  document.getElementById('aiArea').classList.add('show');
+  if (convState) { handleConvReply(txt); return; }
+  // Use Claude API for smart classification + response
+  await aiClassify(txt);
+}
+
+async function aiClassify(txt) {
+  // Show typing indicator
+  aiTyping(async () => {
+    try {
+      const today = new Date().toLocaleDateString('de-DE', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+      const todayIso = todayStr();
+
+      // Build context about existing data
+      const goalTitles = S.goals.filter(g=>!g.archived).map(g=>g.title).join(', ') || 'keine';
+      const todoTitles = S.todos.filter(t=>!t.done).map(t=>t.title).join(', ') || 'keine';
+
+      const systemPrompt = `Du bist FlowMind, ein persönlicher Alltags-Assistent. Heute ist ${today}.
+
+Der Nutzer hat folgende aktive Ziele: ${goalTitles}
+Offene To-Dos heute: ${todoTitles}
+
+Deine Aufgabe: Analysiere die Eingabe des Nutzers und antworte NUR mit einem JSON-Objekt ohne Markdown, ohne Backticks, ohne Erklärung.
+
+JSON-Format:
+{
+  "type": "todo" | "goal" | "appointment" | "checkoff" | "money_update" | "query" | "conversation",
+  "title": "bereinigter Titel",
+  "reply": "kurze freundliche Antwort auf Deutsch (max 2 Sätze)",
+  "date": "YYYY-MM-DD oder null",
+  "endDate": "YYYY-MM-DD oder null (für mehrtägige Termine)",
+  "time": "HH:MM oder null",
+  "person": "Name oder null",
+  "recurrence": "yearly" | "weekly" | "monthly" | null,
+  "reps": Zahl oder null (wie oft pro Woche bei Zielen),
+  "isDaily": true | false,
+  "isMoney": true | false,
+  "targetAmount": Zahl oder null,
+  "amount": Zahl oder null (bei money_update: gespartet Betrag),
+  "matchedTitle": "passendes Ziel/Todo zum Abhaken oder null"
+}
+
+Regeln:
+- "todo": einmalige Aufgabe (abholen, kaufen, anrufen, waschen, etc.)
+- "goal": wiederkehrendes Ziel / Gewohnheit / Sparziel
+- "appointment": Termin mit Datum UND/ODER Uhrzeit (Urlaub, Meeting, Prüfung, Geburtstag, etc.)
+- "checkoff": Nutzer sagt er hat etwas erledigt ("ich habe trainiert", "wäsche ist fertig")
+- "money_update": Nutzer meldet gesparte Euro
+- "query": Nutzer fragt was heute ansteht
+- "conversation": allgemeine Frage/Aussage
+
+Wenn type=appointment und kein Datum erkannt: date=null (wird nachgefragt).
+Antworte IMMER auf Deutsch. Sei kurz und motivierend.`;
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 400,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: txt }]
+        })
+      });
+
+      const data = await response.json();
+      const raw = data.content?.[0]?.text || '{}';
+
+      let parsed;
+      try {
+        const clean = raw.replace(/```json|```/g, '').trim();
+        parsed = JSON.parse(clean);
+      } catch(e) {
+        // Fallback to rule-based if JSON parse fails
+        classify(txt);
+        return;
+      }
+
+      // Show AI reply
+      if (parsed.reply) showAI('ai', parsed.reply);
+
+      // Execute the action
+      switch(parsed.type) {
+        case 'todo':
+          S.todos.unshift({
+            id: uid(),
+            title: parsed.title || txt,
+            done: false,
+            time: parsed.time || '',
+            createdDate: todayStr(),
+            recurring: parsed.recurrence === 'daily' || parsed.isDaily,
+            created: Date.now()
+          });
+          save(); renderOverview();
+          showToast('✅ To-Do gespeichert');
+          break;
+
+        case 'goal':
+          if (parsed.isMoney && parsed.targetAmount) {
+            createGoal(parsed.title || txt, true, parsed.targetAmount, false, 0);
+          } else {
+            const reps = parsed.isDaily ? 7 : (parsed.reps || 5);
+            createGoalDirect(parsed.title || txt, false, 0, parsed.isDaily || false, reps);
+          }
+          break;
+
+        case 'appointment': {
+          let dt = null;
+          if (parsed.date) {
+            const [y,m,d] = parsed.date.split('-').map(Number);
+            const [h,min] = parsed.time ? parsed.time.split(':').map(Number) : [9,0];
+            dt = new Date(y, m-1, d, h, min, 0, 0);
+          }
+          let endDt = null;
+          if (parsed.endDate) {
+            const [ey,em,ed] = parsed.endDate.split('-').map(Number);
+            endDt = new Date(ey, em-1, ed, 23, 59, 0, 0);
+          }
+          if (dt) {
+            saveApt(parsed.title || txt, dt, false, endDt);
+          } else {
+            // Need date - ask
+            pendingAptTitle = parsed.title || txt;
+            pendingAptEndDt = null;
+            convState = 'apt_time';
+          }
+          break;
+        }
+
+        case 'checkoff':
+          checkOffByVoice(parsed.matchedTitle || txt);
+          break;
+
+        case 'money_update':
+          if (parsed.amount) {
+            const mg = S.goals.filter(g=>g.isMoney&&!g.archived);
+            if (mg.length > 0) {
+              mg[0].savedAmount = (mg[0].savedAmount || 0) + parsed.amount;
+              save(); renderOverview();
+            }
+          }
+          break;
+
+        case 'query':
+          giveTodaySummary();
+          break;
+
+        case 'conversation':
+          // Reply already shown above
+          break;
+
+        default:
+          classify(txt); // fallback
+      }
+
+    } catch(err) {
+      console.error('AI error:', err);
+      // Fallback to rule-based classify
+      classify(txt);
+    }
+  });
+}
+
+function createGoalDirect(title, isMoney, targetAmount, isDaily, reps) {
+  const r = isDaily ? 7 : (reps || 5);
+  S.goals.push({
+    id: uid(), title, category: guessCat(title),
+    emoji: guessEmoji(title, isMoney), reps: r,
+    weekChecks: 0, lastWeekKey: getWeekKey(),
+    archived: false, isMoney, isDaily: !!isDaily,
+    targetAmount: targetAmount || 0, savedAmount: 0,
+    created: Date.now()
+  });
+  pTitle=''; pArea=''; save();
+  const tips = getTips(title);
+  showToast('🎯 Ziel erstellt');
+  renderOverview();
 }
 
 function giveTodaySummary(){
@@ -730,14 +1127,23 @@ function checkOffByVoice(txt){
   S.todos.forEach(t=>{if(!t.done){const w=t.title.toLowerCase().split(' ');const mc=w.filter(x=>x.length>3&&l.includes(x)).length;if(mc>=1&&mc/w.length>0.35){t.done=true;matched.push(t.title);}}});
   S.goals.forEach((g,gi)=>{if(g.archived)return;const w=(g.title||'').toLowerCase().split(' ');const mc=w.filter(x=>x.length>3&&l.includes(x)).length;const r=g.isDaily?7:g.reps||0;if(mc>=1&&mc/w.length>0.3&&r>0){const d=g.weekChecks||0;if(d<r){g.weekChecks=d+1;matched.push(g.title+' ('+g.weekChecks+'/'+r+')');}}}); 
   if(matched.length>0){save();renderOverview();aiTyping(()=>showAI('ok','✅ Abgehakt:\n'+matched.map(m=>'· '+m).join('\n')));}
-  else aiTyping(()=>showAI('ai','Kein passendes Element gefunden.'));
+  else aiTyping(()=>showAI('ai','Kein passendes Element gefunden.\nBeispiel: "Ich habe heute trainiert"'));
 }
 
 function updateMoneyGoal(txt){
-  const m=txt.match(/(\d+[\.,]?\d*)\s*(euro|€)/i);if(!m)return;
-  const amount=parseFloat(m[1].replace(',','.'));
+  // Extract amount from text
+  const patterns = [
+    /(\d[\d.,]*)\s*(euro|€)/i,
+    /(euro|€)\s*(\d[\d.,]*)/i,
+  ];
+  let amount = null;
+  for (const p of patterns) {
+    const m = txt.match(p);
+    if (m) { amount = parseFloat((m[1]||m[2]).replace(/\./g,'').replace(',','.')); break; }
+  }
+  if (!amount) { aiTyping(()=>showAI('ai','Wie viel Euro hast du gespart?')); return; }
   const mg=S.goals.filter(g=>g.isMoney&&!g.archived);
-  if(mg.length===0){aiTyping(()=>showAI('ai','Kein Sparziel gefunden.'));return;}
+  if(mg.length===0){aiTyping(()=>showAI('ai','Kein Sparziel gefunden. Erstelle zuerst eines.'));return;}
   const g=mg[0];g.savedAmount=(g.savedAmount||0)+amount;
   const pct=g.targetAmount>0?Math.round(g.savedAmount/g.targetAmount*100):0;
   const reached=g.targetAmount>0&&g.savedAmount>=g.targetAmount;
@@ -746,45 +1152,75 @@ function updateMoneyGoal(txt){
 }
 
 function processTodo(txt){
-  const clean=txt.replace(/^(ich muss|ich soll|heute|bitte|ich)\s+/i,'').replace(/\s+(heute|morgen)$/i,'').trim();
+  const clean=txt
+    .replace(/^(ich muss|ich soll|bitte|ich|nicht vergessen:?|vergiss nicht:?)\s+/i,'')
+    .replace(/\s+(heute|morgen)$/i,'').trim();
   const tm=txt.match(/um\s*(\d{1,2})[:\.](\d{2})/i)||txt.match(/(\d{1,2})\s*uhr/i);
   const time=tm?pad(+tm[1])+':'+(tm[2]?pad(+tm[2]):'00'):'';
-  const recurring=/täglich|jeden tag|immer/.test(txt.toLowerCase());
+  const recurring=/täglich|jeden tag|immer wieder/.test(txt.toLowerCase());
   S.todos.unshift({id:uid(),title:clean||txt,done:false,time,createdDate:todayStr(),recurring,created:Date.now()});
   save();
-  aiTyping(()=>showAI('ok','✅ To-Do: "'+(clean||txt)+'"'+(time?' um '+time:'')+(recurring?' 🔁':'')));
+  aiTyping(()=>showAI('ok','✅ To-Do gespeichert:\n"'+(clean||txt)+'"'+(time?' um '+time:'')+(recurring?' 🔁':'')));
   showToast('✅ To-Do gespeichert');renderOverview();
 }
 
+let pendingAptEndDt=null;
 function startAptConv(txt){
-  pendingAptTitle=txt;
+  pendingAptTitle=txt;pendingAptEndDt=null;
   const dt=parseDatetime(txt);
+  const endDt=parseEndDate(txt);
   if(dt){
-    pendingAptDt=dt;convState='apt_reminder';
+    pendingAptDt=dt;
+    if(endDt){pendingAptEndDt=endDt;}
+    convState='apt_reminder';
     const ds=dt.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    aiTyping(()=>showAI('ai','📅 Termin erkannt:\n'+ds+' um '+pad(dt.getHours())+':'+pad(dt.getMinutes())+'\n\nErinnerung gewünscht? (ja/nein)'));
+    const endStr=endDt?' bis '+endDt.toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'}):'';
+    aiTyping(()=>showAI('ai','📅 Termin erkannt:\n'+ds+(endStr?'\n'+endStr:' um '+pad(dt.getHours())+':'+pad(dt.getMinutes()))+'\n\nErinnerung? (ja/nein)'));
   } else {
     convState='apt_time';
-    aiTyping(()=>showAI('ai','Wann genau?\n(z.B. "3.7.2026 um 15:30 Uhr")'));
+    aiTyping(()=>showAI('ai','Wann genau?\n(z.B. "morgen um 14 Uhr", "3.7. bis 10.7. Urlaub")'));
   }
 }
 
-function saveApt(title,dt,reminder){
-  const pm=title.match(/mit\s+([A-ZÄÖÜa-zäöüß]+)/);const person=pm?pm[1]:'';
+// Parse end date for multi-day events
+function parseEndDate(txt){
+  // Patterns: "bis 10.7.", "bis 15. Juli", "bis 10.7.2026", "– 20.8."
+  const bisDot=txt.match(/bis\s+(\d{1,2})[.\-](\d{1,2})(?:[.\-](\d{2,4}))?/i);
+  if(bisDot){
+    const day=parseInt(bisDot[1]),month=parseInt(bisDot[2]);
+    let year=bisDot[3]?parseInt(bisDot[3]):new Date().getFullYear();
+    if(year<100)year+=2000;
+    return new Date(year,month-1,day,23,59,0,0);
+  }
+  const bisOrd=txt.match(/bis\s+([\w]+)\s+(\w+)/i);
+  if(bisOrd){
+    const ord=ORDINALS_DE[bisOrd[1].toLowerCase()];
+    const mon=MONTHS_DE_MAP[bisOrd[2].toLowerCase()];
+    if(ord&&mon)return new Date(new Date().getFullYear(),mon-1,ord,23,59,0,0);
+  }
+  return null;
+}
+
+function saveApt(title,dt,reminder,endDt){
+  const pm=title.match(/mit\s+(herrn?|frau|dr\.?|prof\.?)?\s*([A-ZÄÖÜa-zäöüß]+)/i);
+  const person=pm?pm[2]:'';
   const recurrence=detectRecurrence(title);
+  // Clean title: remove date/time/person noise
   const clean=title
-    .replace(/^(termin|ich habe|ich muss)\s+/i,'')
-    .replace(/\d{1,2}[.\-\/]\d{1,2}[.\-\/]\d{2,4}/g,'')
-    .replace(/\b(ersten|zweiten|dritten|vierten|fünften|sechsten|siebten|achten|neunten|zehnten|elften|zwölften|dreizehnten|vierzehnten|fünfzehnten|sechzehnten|siebzehnten|achtzehnten|neunzehnten|zwanzigsten|einundzwanzigsten)\b/gi,'')
-    .replace(/morgen|übermorgen|um\s*\d{1,2}[:\.\s]*\d{0,2}\s*uhr|\d{1,2}\s*uhr|\d{1,2}[:.]\d{2}/gi,'')
-    .replace(/mit\s+[A-Za-zäöüÄÖÜß]+/g,'')
-    .replace(/jährlich|jedes jahr|wöchentlich|jede woche|monatlich|am\s+/gi,'')
+    .replace(/^(termin|ich habe einen?|ich hab einen?|es gibt einen?)\s+/i,'')
+    .replace(/\d{1,2}[.\-\/]\d{1,2}([.\-\/]\d{2,4})?/g,'')
+    .replace(/\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|morgen|übermorgen)\b/gi,'')
+    .replace(/um\s*\d{1,2}[:\.\s]*\d{0,2}\s*uhr|\d{1,2}[:.]\d{2}\s*uhr?/gi,'')
+    .replace(/\d{1,2}\s*uhr/gi,'')
+    .replace(/mit\s+(herrn?|frau|dr\.?|prof\.?)?\s*[A-Za-zäöüÄÖÜß]+/gi,'')
+    .replace(/jährlich|jedes jahr|wöchentlich|jede woche|monatlich/gi,'')
+    .replace(/\s+(in|im|am|beim?|bei der)\s+\S+/gi,' ')
     .replace(/\s+/g,' ').trim();
-  S.apts.push({id:uid(),title:clean||title,datetime:dt.toISOString(),person,reminder:!!reminder,recurrence,created:Date.now()});
+  S.apts.push({id:uid(),title:clean||title,datetime:dt.toISOString(),endDatetime:endDt?endDt.toISOString():null,person,reminder:!!reminder,recurrence,created:Date.now()});
   save();
   const rl=recurrence==='yearly'?' 🔁 Jährlich':recurrence==='weekly'?' 🔁 Wöchentlich':recurrence==='monthly'?' 🔁 Monatlich':'';
   const ds=dt.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  aiTyping(()=>showAI('ok','📅 Gespeichert:\n"'+(clean||title)+'"\n'+ds+' '+pad(dt.getHours())+':'+pad(dt.getMinutes())+(person?' 👤 '+person:'')+(reminder?' 🔔':'')+(rl)));
+  aiTyping(()=>showAI('ok','📅 Termin gespeichert:\n"'+(clean||title)+'"\n'+ds+' '+pad(dt.getHours())+':'+pad(dt.getMinutes())+(person?' 👤 '+person:'')+(reminder?' 🔔':'')+(rl)));
   showToast('📅 Termin gespeichert');renderOverview();
 }
 
@@ -792,34 +1228,70 @@ function saveApt(title,dt,reminder){
 function startGoalConv(txt){
   pTitle=txt;pArea='';
   const l=txt.toLowerCase();
-  const hasMoney=/(\d+)\s*(euro|€)/.test(l)||(/\bgeld\b|\bsparen\b/.test(l)&&!/ich habe|ich hab/.test(l));
-  const isDaily=/täglich|jeden tag|jeden morgen|jeden abend|daily/.test(l);
-  const repsMatch=txt.match(/(\d+)\s*x?\s*(mal|x)?\s*(die\s*)?(woche|tag|pro\s*woche)/i);
+
+  // Extract money amount directly from input - no need to ask again
+  const moneyMatch = txt.match(/(\d[\d.,]*)\s*(euro|€|tausend\s*euro)/i) ||
+                     txt.match(/(\d+)\s*k\s*(euro|€)?/i);
+  const isMoney = !!moneyMatch || /\bgeld\b|\bsparen\b/.test(l);
+  
+  if(isMoney && moneyMatch){
+    // Amount already given - create directly
+    let raw = moneyMatch[1].replace(/\./g,'').replace(',','.');
+    // Handle "10 Tausend" or "10k"
+    if(/tausend/i.test(moneyMatch[0])||/k\s*(euro|€)?$/i.test(moneyMatch[0])) raw = String(parseFloat(raw)*1000);
+    const target = parseFloat(raw);
+    convState=null;
+    createGoal(txt, true, target, false, 0);
+    return;
+  }
+  if(isMoney && !moneyMatch){
+    convState='goal_money';
+    aiTyping(()=>showAI('ai','Sparziel! Wie viel Euro möchtest du sparen?'));
+    return;
+  }
+
+  const isDaily=/täglich|jeden tag|jeden morgen|jeden abend/.test(l);
+  const repsMatch=txt.match(/(\d+)\s*x?\s*(mal\s+)?(die\s+)?(woche|tag|pro\s*(woche|tag))/i);
   const hasReps=!!repsMatch||isDaily;
-  const vague=/disziplin|besser\s+werden|mehr\s+fokus|gesünder/.test(l)&&!hasReps&&!hasMoney;
-  if(hasMoney&&!hasReps){convState='goal_money';aiTyping(()=>showAI('ai','Sparziel! Wie viel Euro möchtest du sparen?'));}
-  else if(vague){convState='goal_area';aiTyping(()=>showAI('ai','In welchem Bereich?\n(z.B. Sport, Lernen, Arbeit)'));}
+  const vague=/disziplin|besser\s+werden|mehr\s+fokus|gesünder|fitter|abnehmen|zunehmen/.test(l)&&!hasReps;
+
+  if(vague){convState='goal_area';aiTyping(()=>showAI('ai','Klingt gut! In welchem Bereich?\n(z.B. Sport, Ernährung, Lernen, Arbeit)'));}
   else if(!hasReps){
     convState='goal_measure';
-    aiTyping(()=>showAI('ai','Wie oft?\n· "5x die Woche"\n· "täglich"\n· "einmal pro Woche"\n· "kein Intervall" (für Langzeitziele)'));
+    aiTyping(()=>showAI('ai','Wie oft pro Woche?\n· "5x die Woche"\n· "täglich"\n· "1x pro Woche"\n· "kein festes Intervall"'));
   }
-  else createGoal(txt,false,0,isDaily,repsMatch?parseInt(repsMatch[1]):7);
+  else createGoal(txt,false,0,isDaily,repsMatch?parseInt(repsMatch[1]):(isDaily?7:1));
 }
 
 function handleConvReply(txt){
   const l=txt.toLowerCase();
   const isDaily=/täglich|jeden tag/.test(l);
-  const rm=txt.match(/(\d+)\s*x?\s*(mal|x)?\s*(die\s*)?(woche|tag|pro\s*woche)/i);
-  const noReps=/kein|ohne|langzeit|open|offen/.test(l);
-  if(convState==='goal_area'){pArea=txt;convState='goal_measure';aiTyping(()=>showAI('ai','Wie oft?\n· "5x die Woche"\n· "täglich"\n· "kein Intervall"'));}
+  const rm=txt.match(/(\d+)\s*x?\s*(mal\s+)?(die\s+)?(woche|tag|pro\s*(woche|tag))/i);
+  const noReps=/kein|ohne|langzeit|offen|open/.test(l);
+
+  if(convState==='goal_area'){pArea=txt;convState='goal_measure';aiTyping(()=>showAI('ai','Wie oft?\n· "5x die Woche"\n· "täglich"\n· "kein festes Intervall"'));}
   else if(convState==='goal_measure'){
     convState=null;
     const reps=isDaily?7:rm?parseInt(rm[1]):noReps?0:1;
     createGoal(pTitle+(pArea?' ('+pArea+')':''),false,0,isDaily,reps);
   }
-  else if(convState==='goal_money'){const m=txt.match(/(\d+[\.,]?\d*)/);convState=null;createGoal(pTitle,true,m?parseFloat(m[1].replace(',','.')):0,false,0);}
-  else if(convState==='apt_time'){const dt=parseDatetime(txt);if(dt){pendingAptDt=dt;convState='apt_reminder';const ds=dt.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short',year:'numeric'});aiTyping(()=>showAI('ai',ds+' '+pad(dt.getHours())+':'+pad(dt.getMinutes())+'\n\nErinnerung? (ja/nein)'));}else{aiTyping(()=>showAI('ai','Format: "3.7.2026 um 15:30 Uhr"'));}}
-  else if(convState==='apt_reminder'){convState=null;saveApt(pendingAptTitle,pendingAptDt||new Date(),/ja|bitte|gerne|klar/.test(l));}
+  else if(convState==='goal_money'){
+    const moneyMatch=txt.match(/(\d[\d.,]*)\s*(euro|€|tausend|k)?/i);
+    let target=0;
+    if(moneyMatch){
+      let raw=moneyMatch[1].replace(/\./g,'').replace(',','.');
+      if(/tausend/i.test(txt)||/\bk\b/i.test(txt))raw=String(parseFloat(raw)*1000);
+      target=parseFloat(raw);
+    }
+    convState=null;
+    createGoal(pTitle,true,target,false,0);
+  }
+  else if(convState==='apt_time'){
+    const dt=parseDatetime(txt);
+    if(dt){pendingAptDt=dt;convState='apt_reminder';const ds=dt.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short',year:'numeric'});aiTyping(()=>showAI('ai',ds+' '+pad(dt.getHours())+':'+pad(dt.getMinutes())+'\n\nErinnerung? (ja/nein)'));}
+    else{aiTyping(()=>showAI('ai','Bitte Format: "3.7.2026 um 15:30 Uhr"'));}
+  }
+  else if(convState==='apt_reminder'){convState=null;saveApt(pendingAptTitle,pendingAptDt||new Date(),/ja|bitte|gerne|klar|yes/.test(l),pendingAptEndDt);}
 }
 
 function createGoal(title,isMoney,targetAmount,isDaily,reps){
@@ -828,14 +1300,70 @@ function createGoal(title,isMoney,targetAmount,isDaily,reps){
   S.goals.push({id:uid(),title,category:pArea||guessCat(title),emoji:guessEmoji(title,isMoney),reps:r,weekChecks:0,lastWeekKey:getWeekKey(),archived:false,isMoney,isDaily:!!isDaily,targetAmount:targetAmount||0,savedAmount:0,created:Date.now()});
   pTitle='';pArea='';save();
   const tips=getTips(title);
-  const badge=isMoney?'💰 Sparziel':isDaily?'🔁 Täglich':r>0?'🔄 '+r+'× pro Woche':'📌 Langzeitziel';
-  aiTyping(()=>showAI('ok','🎯 Ziel erstellt! '+badge+'\n💡 '+tips[0].text));
+  const badge=isMoney?'💰 Sparziel: '+fmt(targetAmount||0)+' €':isDaily?'🔁 Täglich':r>0?'🔄 '+r+'× pro Woche':'📌 Langzeitziel';
+  aiTyping(()=>showAI('ok','🎯 Ziel erstellt!\n'+badge+'\n\n💡 '+tips[0].text));
   showToast('🎯 Ziel erstellt');renderOverview();
 }
 
-// AI UI
-function showAI(role,txt){const msgs=document.getElementById('aiMsgs');const d=document.createElement('div');d.className='msg '+role;d.textContent=txt;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;}
-function aiTyping(cb){const msgs=document.getElementById('aiMsgs');const d=document.createElement('div');d.className='msg ai';d.id='tind';d.innerHTML='<div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>';msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;setTimeout(()=>{const t=document.getElementById('tind');if(t)t.remove();cb();},900);}
+
+
+
+// CALENDAR
+// DATE PARSER
+const ORDINALS_DE={ersten:1,zweiten:2,dritten:3,vierten:4,fünften:5,sechsten:6,siebten:7,achten:8,neunten:9,zehnten:10,elften:11,zwölften:12,dreizehnten:13,vierzehnten:14,fünfzehnten:15,sechzehnten:16,siebzehnten:17,achtzehnten:18,neunzehnten:19,zwanzigsten:20,einundzwanzigsten:21,zweiundzwanzigsten:22,dreiundzwanzigsten:23,vierundzwanzigsten:24,fünfundzwanzigsten:25,sechsundzwanzigsten:26,siebenundzwanzigsten:27,achtundzwanzigsten:28,neunundzwanzigsten:29,dreißigsten:30,einunddreißigsten:31};
+const MONTHS_DE_MAP={januar:1,februar:2,märz:3,april:4,mai:5,juni:6,juli:7,august:8,september:9,oktober:10,november:11,dezember:12};
+function parseDatetime(txt){
+  const now=new Date();
+  let day=null,month=null,year=null,hour=null,minute=0;
+  const numDate=txt.match(/(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})/);
+  if(numDate){day=parseInt(numDate[1]);month=parseInt(numDate[2]);year=parseInt(numDate[3]);if(year<100)year+=2000;}
+  if(!day){const ordKeys=Object.keys(ORDINALS_DE).join('|');const re=new RegExp('('+ordKeys+')\\s+(\\d{1,2})\\.?','i');const m=txt.match(re);if(m){day=ORDINALS_DE[m[1].toLowerCase()];month=parseInt(m[2]);}}
+  if(!day){const ordKeys=Object.keys(ORDINALS_DE).join('|');const monKeys=Object.keys(MONTHS_DE_MAP).join('|');const re=new RegExp('('+ordKeys+')\\s+('+monKeys+')','i');const m=txt.match(re);if(m){day=ORDINALS_DE[m[1].toLowerCase()];month=MONTHS_DE_MAP[m[2].toLowerCase()];}}
+  if(!day){const re=/(\d{1,2})\.\s*(\d{1,2})\./;const m=txt.match(re);if(m){day=parseInt(m[1]);month=parseInt(m[2]);}}
+  if(!day){
+    if(/übermorgen/i.test(txt)){const d=new Date(now);d.setDate(d.getDate()+2);day=d.getDate();month=d.getMonth()+1;year=d.getFullYear();}
+    else if(/morgen/i.test(txt)){const d=new Date(now);d.setDate(d.getDate()+1);day=d.getDate();month=d.getMonth()+1;year=d.getFullYear();}
+  }
+  if(!day){const wd={montag:1,dienstag:2,mittwoch:3,donnerstag:4,freitag:5,samstag:6,sonntag:0};for(const[k,v]of Object.entries(wd)){if(new RegExp('\\b'+k+'\\b','i').test(txt)){const d=nextWeekday(v);day=d.getDate();month=d.getMonth()+1;year=d.getFullYear();break;}}}
+  if(!day)return null;
+  if(!year)year=now.getFullYear();
+  if(!month)month=now.getMonth()+1;
+  const timeColon=txt.match(/(\d{1,2})[:\.](\d{2})\s*(?:uhr)?/i);
+  const timeUhr=txt.match(/\bum\s*(\d{1,2})\s*uhr\b/i)||txt.match(/(\d{1,2})\s*uhr\b/i);
+  if(timeColon){hour=parseInt(timeColon[1]);minute=parseInt(timeColon[2]);}
+  else if(timeUhr){hour=parseInt(timeUhr[1]);minute=0;}
+  if(hour===null)hour=9;
+  const dt=new Date(year,month-1,day,hour,minute,0,0);
+  return isNaN(dt.getTime())?null:dt;
+}
+function nextWeekday(wd){const d=new Date();const diff=(wd-d.getDay()+7)%7||7;d.setDate(d.getDate()+diff);return d;}
+function detectRecurrence(txt){
+  const l=txt.toLowerCase();
+  if(/jährlich|jedes jahr|geburtstag|jahrestag/.test(l))return'yearly';
+  if(/wöchentlich|jede woche/.test(l))return'weekly';
+  if(/monatlich|jeden monat/.test(l))return'monthly';
+  return null;
+}
+
+// VOICE
+let recog=null,listening=false;
+function toggleVoice(){if(listening)stopVoice();else startVoice();}
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Bitte Text-Tab nutzen');setInputTab('text');return;}
+  recog=new SR();recog.lang='de-DE';recog.continuous=false;recog.interimResults=true;listening=true;
+  document.getElementById('vbtn').classList.add('on');document.getElementById('vring').classList.add('on');document.getElementById('waves').classList.add('on');
+  document.getElementById('vlbl').textContent='Höre zu…';
+  const vt=document.getElementById('vtxt');vt.style.display='block';vt.textContent='…';
+  recog.onresult=e=>{let txt='';for(let i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;vt.textContent=txt;if(e.results[e.results.length-1].isFinal){stopVoice();handleInput(txt);}};
+  recog.onerror=e=>{showToast('Fehler: '+e.error+' → Text nutzen');stopVoice();setInputTab('text');};
+  recog.onend=()=>stopVoice();recog.start();
+}
+function stopVoice(){
+  listening=false;if(recog){try{recog.stop();}catch(e){}}recog=null;
+  document.getElementById('vbtn').classList.remove('on');document.getElementById('vring').classList.remove('on');document.getElementById('waves').classList.remove('on');
+  document.getElementById('vlbl').textContent='Tippen zum Starten';
+}
 
 // ALARMS
 const QUOTES=[{q:'Ich fürchte nicht den Mann der 10.000 Tritte einmal geübt hat, sondern den der einen Tritt 10.000 Mal geübt hat.',a:'Bruce Lee'},{q:'Disziplin ist die Brücke zwischen Zielen und Leistungen.',a:'Jim Rohn'},{q:'Schmerz ist vorübergehend. Aufgeben ist für immer.',a:'Lance Armstrong'},{q:'Erfolg ist die Summe kleiner Anstrengungen, täglich wiederholt.',a:'Robert Collier'},{q:'Stärke kommt nicht aus körperlicher Kapazität, sondern aus einem unbeugsamen Willen.',a:'Mahatma Gandhi'},{q:'Das Geheimnis des Vorankommens ist anzufangen.',a:'Mark Twain'},{q:'Wasser ist weich. Aber mit genug Zeit durchbohrt es Stein.',a:'Bruce Lee'},{q:'Champions stehen auf wenn sie nicht wollen. Das ist der Unterschied.',a:'Unbekannt'},{q:'Die größte Glorie liegt nicht darin nie zu fallen, sondern jedes Mal wieder aufzustehen.',a:'Konfuzius'},{q:'Was dich nicht umbringt, macht dich stärker.',a:'Friedrich Nietzsche'}];
@@ -855,7 +1383,7 @@ function renderAlarms(){
 function saveAlarm(){const t=document.getElementById('al-t').value;if(!t){showToast('Zeit wählen');return;}S.alarms.push({id:uid(),time:t,label:document.getElementById('al-l').value.trim()||'Wecker',style:document.getElementById('al-s').value,active:true});save();closeModal('alarmModal');renderAlarms();showToast('⏰ '+t);}
 function editAlarm(i){editAlarmIdx=i;document.getElementById('eal-t').value=S.alarms[i].time;document.getElementById('eal-l').value=S.alarms[i].label;openModal('editAlarmModal');}
 function updateAlarm(){const a=S.alarms[editAlarmIdx];if(!a)return;const t=document.getElementById('eal-t').value;if(t)a.time=t;const l=document.getElementById('eal-l').value.trim();if(l)a.label=l;save();closeModal('editAlarmModal');renderAlarms();showToast('✓ Aktualisiert');}
-function toggleAlarm(i){S.alarms[i].active=S.alarms[i].active===false;save();renderAlarms();}
+function toggleAlarm(i){S.alarms[i].active=S.alarms[i].active===false?true:false;save();renderAlarms();}
 function delAlarm(i){if(confirm('Wecker löschen?')){S.alarms.splice(i,1);save();renderAlarms();}}
 function setAlStyle(i,s){S.alarms[i].style=s;save();renderAlarms();}
 
@@ -882,7 +1410,7 @@ document.querySelectorAll('.modal-bg').forEach(m=>{m.addEventListener('click',e=
 // TIPS
 function getTips(title){
   const t=(title||'').toLowerCase();
-  const all={tr:[{icon:'💪',text:'Progressive Overload: Jede Woche 5% mehr.'},{icon:'🧠',text:'Warm-Up nicht überspringen – 5 Min reichen.'},{icon:'💧',text:'500ml Wasser vor dem Training.'},{icon:'😴',text:'Muskeln wachsen nachts – Schlaf ist Training.'}],fi:[{icon:'🧠',text:'50/30/20: 50% Bedarf, 30% Wünsche, 20% Sparen.'},{icon:'🔄',text:'Automatisiere: Dauerauftrag nach Gehaltseingang.'},{icon:'📋',text:'30 Tage alle Ausgaben tracken.'},{icon:'🚀',text:'Sag "100 Euro gespart" zum Aktualisieren.'}],le:[{icon:'🧠',text:'Aktives Recall schlägt passives Lesen.'},{icon:'🔄',text:'Spaced Repetition: Heute, morgen, in 3 Tagen.'},{icon:'✏️',text:'Feynman: Erkläre es als wärst du der Lehrer.'},{icon:'⏱️',text:'25 Min Fokus, 5 Min Pause.'}],di:[{icon:'🎯',text:'Identität: "Ich bin jemand der täglich trainiert."'},{icon:'⏱️',text:'2-Minuten-Regel: Unter 2 Min → sofort.'},{icon:'🌍',text:'Gute Gewohnheiten leichter machen als schlechte.'},{icon:'📊',text:'Was gemessen wird, verbessert sich.'}],df:[{icon:'📈',text:'1% täglich = 37x besser nach einem Jahr.'},{icon:'🏃',text:'Konsistenz schlägt Intensität.'},{icon:'🔥',text:'Im Plateau durchhalten – der Durchbruch kommt.'},{icon:'🤝',text:'Teile dein Ziel – Accountability hilft.'}]};
+  const all={tr:[{icon:'💪',text:'Progressive Overload: Jede Woche 5% mehr.'},{icon:'🧠',text:'Warm-Up nicht überspringen – 5 Min reichen.'},{icon:'💧',text:'500ml Wasser vor dem Training.'},{icon:'😴',text:'Muskeln wachsen nachts – Schlaf ist Training.'}],fi:[{icon:'🧠',text:'50/30/20: 50% Bedarf, 30% Wünsche, 20% Sparen.'},{icon:'🔄',text:'Automatisiere: Dauerauftrag nach Gehaltseingang.'},{icon:'📋',text:'30 Tage alle Ausgaben tracken.'},{icon:'🚀',text:'Sag "500 Euro gespart" zum Aktualisieren.'}],le:[{icon:'🧠',text:'Aktives Recall schlägt passives Lesen.'},{icon:'🔄',text:'Spaced Repetition: Heute, morgen, in 3 Tagen.'},{icon:'✏️',text:'Feynman: Erkläre es als wärst du der Lehrer.'},{icon:'⏱️',text:'25 Min Fokus, 5 Min Pause.'}],di:[{icon:'🎯',text:'Identität: "Ich bin jemand der täglich trainiert."'},{icon:'⏱️',text:'2-Minuten-Regel: Unter 2 Min → sofort.'},{icon:'🌍',text:'Gute Gewohnheiten leichter machen als schlechte.'},{icon:'📊',text:'Was gemessen wird, verbessert sich.'}],df:[{icon:'📈',text:'1% täglich = 37x besser nach einem Jahr.'},{icon:'🏃',text:'Konsistenz schlägt Intensität.'},{icon:'🔥',text:'Im Plateau durchhalten – der Durchbruch kommt.'},{icon:'🤝',text:'Teile dein Ziel – Accountability hilft.'}]};
   if(/train|sport|gym|lauf|fitness|liegest|kniebeugen|bein|ausdauer/.test(t))return all.tr;
   if(/spar|geld|€|euro|finanz/.test(t))return all.fi;
   if(/lern|buch|kurs|studier|sprach/.test(t))return all.le;
@@ -904,7 +1432,7 @@ function seed(){
   const tom=new Date();tom.setDate(tom.getDate()+1);tom.setHours(14,30,0,0);
   S.goals=[
     {id:uid(),title:'5x die Woche trainieren',category:'Sport',emoji:'🏋️',reps:5,weekChecks:2,lastWeekKey:wk,archived:false,isMoney:false,isDaily:false,created:Date.now()},
-    {id:uid(),title:'5.000 € sparen bis Dezember',category:'Finanzen',emoji:'💰',reps:0,weekChecks:0,lastWeekKey:wk,archived:false,isMoney:true,isDaily:false,targetAmount:5000,savedAmount:1200,created:Date.now()}
+    {id:uid(),title:'10.000 € sparen',category:'Finanzen',emoji:'💰',reps:0,weekChecks:0,lastWeekKey:wk,archived:false,isMoney:true,isDaily:false,targetAmount:10000,savedAmount:2400,created:Date.now()}
   ];
   S.todos=[
     {id:uid(),title:'Wäsche waschen',done:false,time:'18:00',createdDate:today,created:Date.now()},
