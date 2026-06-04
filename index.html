@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <meta name="theme-color" content="#0F1117"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="FlowMind"/>
 <link rel="manifest" href="manifest.json"/>
 <title>FlowMind</title>
@@ -16,7 +15,7 @@
   --bg:#0F1117;--bg2:#161820;--bg3:#1C1E28;
   --sur:#1E2030;--sur2:#252840;
   --bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.11);
-  --acc:#2DD4BF;--acc2:#5EEAD4;--glow:rgba(45,212,191,0.18);--acc-bg:rgba(45,212,191,0.08);
+  --acc:#2DD4BF;--glow:rgba(45,212,191,0.18);--acc-bg:rgba(45,212,191,0.08);
   --grn:#4ADE80;--grn-bg:rgba(74,222,128,0.1);
   --red:#F87171;--amb:#FBBF24;--amb-bg:rgba(251,191,36,0.1);
   --txt:#F0F0F8;--txt2:#8A8AA8;--txt3:#4A4A68;
@@ -30,54 +29,59 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
 .sbt{font-size:13px;font-weight:500;color:var(--txt2)}
 .sbd{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)}
 .screens{flex:1;overflow:hidden;position:relative}
-.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;background:var(--bg);display:none;flex-direction:column;padding-bottom:calc(70px + var(--sf-bot));scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;background:var(--bg);display:none;flex-direction:column;padding-bottom:calc(70px + var(--sf-bot));scrollbar-width:none}
 .screen::-webkit-scrollbar{display:none}
 .screen.active{display:flex}
 .topbar{padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .tt{font-size:21px;font-weight:700;letter-spacing:-0.3px}
 .ts{font-size:12px;color:var(--txt3);margin-top:2px}
-.ibtn{width:34px;height:34px;border-radius:9px;border:1px solid var(--bdr2);background:var(--sur);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2);font-size:14px;flex-shrink:0}
 .pad{padding:0 14px}
 .sec{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:1.2px;margin:16px 0 8px}
+/* STATS */
 .srow{display:flex;gap:8px;padding:6px 14px 0}
 .sc{flex:1;background:var(--sur);border-radius:12px;border:1px solid var(--bdr);padding:11px 12px}
 .sn{font-size:21px;font-weight:700;line-height:1}
 .sl{font-size:10px;color:var(--txt3);margin-top:3px}
 .str{font-size:10px;color:var(--acc);margin-top:2px}
+/* GRID */
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px;margin-top:14px}
 .col{display:flex;flex-direction:column;gap:7px;min-width:0}
 .col-h{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;display:flex;align-items:center;gap:5px}
-.badge{background:var(--sur);border-radius:6px;padding:1px 6px;font-size:10px}
-.gc{background:var(--sur);border-radius:13px;border:1px solid var(--bdr);padding:11px;cursor:pointer;transition:border-color 0.15s}
+.bdg{background:var(--sur);border-radius:6px;padding:1px 6px;font-size:10px}
+/* GOAL CARD */
+.gc{background:var(--sur);border-radius:13px;border:1px solid var(--bdr);padding:11px;cursor:pointer}
 .gc:active{border-color:var(--acc)}
 .gct{display:flex;align-items:center;gap:7px;margin-bottom:8px}
 .ge{font-size:17px;flex-shrink:0}
-.gtitle{font-size:12px;font-weight:600;color:var(--txt);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gtitle{font-size:12px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .gpct{font-size:10px;color:var(--acc);flex-shrink:0;font-weight:600}
 .checks{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px}
 .ck{width:24px;height:24px;border-radius:6px;border:1.5px solid var(--bdr2);background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;transition:all 0.2s;flex-shrink:0;color:var(--bg)}
 .ck.done{background:var(--acc);border-color:var(--acc)}
 .gpbar{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden}
 .gpfill{height:100%;border-radius:2px;background:var(--acc);transition:width 0.4s}
-.week-badge{font-size:9px;font-weight:600;background:var(--acc-bg);color:var(--acc);border-radius:5px;padding:2px 6px;margin-top:4px;display:inline-block}
-.daily-badge{font-size:9px;font-weight:600;background:rgba(74,222,128,0.12);color:var(--grn);border-radius:5px;padding:2px 6px;margin-top:4px;display:inline-block}
-.money-mini{font-size:10px;color:var(--amb);margin-top:4px;font-weight:600}
-.goal-done-badge{font-size:9px;font-weight:600;background:rgba(74,222,128,0.15);color:var(--grn);border-radius:5px;padding:2px 8px;margin-top:4px;display:inline-block}
+.wbdg{font-size:9px;font-weight:600;background:var(--acc-bg);color:var(--acc);border-radius:5px;padding:2px 6px;margin-top:4px;display:inline-block}
+.dbdg{font-size:9px;font-weight:600;background:var(--grn-bg);color:var(--grn);border-radius:5px;padding:2px 6px;margin-top:4px;display:inline-block}
+.mmini{font-size:10px;color:var(--amb);margin-top:4px;font-weight:600}
+/* TODO */
 .tc{background:var(--sur);border-radius:10px;border:1px solid var(--bdr);padding:8px 10px;display:flex;align-items:center;gap:8px;cursor:pointer}
-.tc.apt-item{border-color:rgba(251,191,36,0.25);background:linear-gradient(135deg,var(--sur),rgba(251,191,36,0.04))}
-.tcc{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--bdr2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;font-size:10px;color:var(--bg)}
+.tc.apt{border-color:rgba(251,191,36,0.25);background:linear-gradient(135deg,var(--sur),rgba(251,191,36,0.04))}
+.tcc{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--bdr2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:var(--bg)}
 .tcc.done{background:var(--grn);border-color:var(--grn)}
-.tct{font-size:12px;color:var(--txt);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tct{font-size:12px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tct.done{text-decoration:line-through;color:var(--txt3)}
 .ttime{font-size:10px;color:var(--txt3);flex-shrink:0}
-.apt-icon{font-size:14px;flex-shrink:0;margin-left:auto}
+.apticon{font-size:14px;flex-shrink:0;margin-left:auto}
+/* EMPTY */
 .empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:16px 8px;gap:5px}
 .empty p{font-size:11px;color:var(--txt3);line-height:1.4}
+/* INPUT */
 .input-inner{flex:1;display:flex;flex-direction:column;padding:12px 14px;gap:10px}
-.input-tabs{display:flex;background:var(--sur);border-radius:11px;padding:3px;gap:3px;flex-shrink:0}
+.itabs{display:flex;background:var(--sur);border-radius:11px;padding:3px;gap:3px;flex-shrink:0}
 .itab{flex:1;padding:8px;border-radius:9px;border:none;background:none;font-size:13px;font-weight:500;color:var(--txt3);cursor:pointer;font-family:var(--f);transition:all 0.2s}
 .itab.active{background:var(--bg3);color:var(--txt)}
-.ai-area{background:var(--sur);border-radius:14px;border:1px solid var(--bdr);overflow:hidden;display:none;flex-direction:column;flex:1;min-height:0}
+/* AI CHAT */
+.ai-area{background:var(--sur);border-radius:14px;border:1px solid var(--bdr);overflow:hidden;display:none;flex-direction:column;flex:1;min-height:120px}
 .ai-area.show{display:flex}
 .ai-head{padding:9px 13px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--acc);flex-shrink:0}
 .aid{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:bl 1.5s infinite}
@@ -88,12 +92,12 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
 .msg.ai{background:var(--bg3);color:var(--txt2);border-radius:4px 10px 10px 10px;align-self:flex-start}
 .msg.user{background:var(--sur2);color:var(--txt);border:1px solid var(--bdr2);border-radius:10px 4px 10px 10px;align-self:flex-end}
 .msg.ok{background:var(--grn-bg);color:var(--grn);border-radius:10px;align-self:center;font-size:12px;font-weight:600}
-.msg.info{background:var(--acc-bg);color:var(--acc);border-radius:10px;align-self:center;font-size:12px}
 .tdots{display:flex;gap:4px;padding:3px 0}
 .tdot{width:6px;height:6px;border-radius:50%;background:var(--txt3);animation:tda 1.2s ease-in-out infinite}
 .tdot:nth-child(2){animation-delay:0.2s}.tdot:nth-child(3){animation-delay:0.4s}
 @keyframes tda{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
-.voice-pane{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px 0}
+/* VOICE */
+.vpane{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px 0}
 .vring{position:relative;width:100px;height:100px;display:flex;align-items:center;justify-content:center}
 .vring::before{content:'';position:absolute;inset:-8px;border-radius:50%;border:1.5px solid var(--acc);opacity:0;transition:opacity 0.3s}
 .vring.on::before{opacity:0.3;animation:rp 2s ease-in-out infinite}
@@ -107,13 +111,15 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
 .wv{width:3px;border-radius:2px;background:var(--acc);animation:wva 0.9s ease-in-out infinite}
 .wv:nth-child(2){animation-delay:0.12s}.wv:nth-child(3){animation-delay:0.24s}.wv:nth-child(4){animation-delay:0.12s}
 @keyframes wva{0%,100%{height:4px}50%{height:16px}}
-.text-input-row{display:flex;gap:8px;flex-shrink:0}
+/* TEXT INPUT */
+.tirow{display:flex;gap:8px;flex-shrink:0}
 .tinput{flex:1;background:var(--sur);border:1px solid var(--bdr2);border-radius:12px;padding:11px 13px;font-size:14px;color:var(--txt);outline:none;font-family:var(--f);line-height:1.4;resize:none;max-height:100px;min-height:44px}
 .tinput:focus{border-color:var(--acc)}
 .tinput::placeholder{color:var(--txt3)}
-.send-btn{width:44px;height:44px;border-radius:12px;background:var(--acc);border:none;color:var(--bg);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cal-title{font-size:16px;font-weight:700}
+.sbtn{width:44px;height:44px;border-radius:12px;background:var(--acc);border:none;color:var(--bg);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+/* CALENDAR */
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-ttl{font-size:16px;font-weight:700}
 .cal-nav{width:32px;height:32px;border-radius:8px;border:1px solid var(--bdr2);background:var(--sur);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2);font-size:16px}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
 .cal-dow{font-size:10px;color:var(--txt3);text-align:center;padding:5px 0;font-weight:600}
@@ -123,14 +129,15 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
 .cal-day.other{color:var(--txt3)}
 .cal-day.sel{background:var(--acc);color:var(--bg);font-weight:700}
 .cal-dot{width:4px;height:4px;border-radius:50%;opacity:0}
-.cal-day.has-event .cal-dot{opacity:1;background:var(--acc)}
+.cal-day.has-ev .cal-dot{opacity:1;background:var(--acc)}
 .cal-day.sel .cal-dot{background:var(--bg)}
-.cal-sel-hdr{font-size:13px;font-weight:600;color:var(--txt);margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
-.cal-ev{background:var(--sur);border-radius:11px;border:1px solid var(--bdr);padding:10px 13px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
-.cal-ev-time{font-size:15px;font-weight:700;color:var(--acc);flex-shrink:0;min-width:42px}
+.cal-shdr{font-size:13px;font-weight:600;margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
+.cal-ev{background:var(--sur);border-radius:11px;border:1px solid var(--bdr);padding:10px 13px;margin-bottom:8px;display:flex;gap:12px}
+.cal-ev-t{font-size:14px;font-weight:700;color:var(--acc);flex-shrink:0;min-width:44px}
 .cal-ev-title{font-size:13px;font-weight:600}
 .cal-ev-sub{font-size:11px;color:var(--txt3);margin-top:2px}
 .cal-ev-recur{font-size:10px;color:var(--acc);margin-top:3px;font-weight:500}
+/* GOAL OVERLAY */
 .overlay{position:absolute;inset:0;background:var(--bg);z-index:15;display:none;flex-direction:column;overflow-y:auto;padding-bottom:30px;scrollbar-width:none}
 .overlay::-webkit-scrollbar{display:none}
 .overlay.show{display:flex}
@@ -142,42 +149,47 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
 .ds{flex:1;background:var(--sur);border-radius:12px;border:1px solid var(--bdr);padding:12px}
 .ds-n{font-size:20px;font-weight:700;line-height:1}
 .ds-l{font-size:10px;color:var(--txt3);margin-top:3px}
-.money-card{background:var(--sur);border-radius:14px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px}
-.money-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px}
-.money-saved{font-size:28px;font-weight:700;color:var(--amb)}
-.money-target{font-size:13px;color:var(--txt3)}
-.money-pb{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-bottom:8px}
-.money-pf{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--amb),var(--acc));transition:width 0.5s}
-.money-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--txt3)}
-.money-eta{background:var(--amb-bg);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:12px;color:var(--amb);font-weight:500}
-.money-quote{background:var(--bg3);border-radius:10px;padding:10px 12px;margin-top:8px;border-left:2px solid var(--amb);font-size:12px;color:var(--txt2);font-style:italic;line-height:1.5}
-.week-card{background:var(--sur);border-radius:14px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px}
-.week-lbl{font-size:11px;color:var(--txt3);margin-bottom:10px;font-weight:500}
-.week-cks{display:flex;gap:6px;flex-wrap:wrap}
+/* MONEY CARD */
+.mcard{background:var(--sur);border-radius:14px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px}
+.mcard-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px}
+.msaved{font-size:28px;font-weight:700;color:var(--amb)}
+.mtarget{font-size:13px;color:var(--txt3)}
+.mpb{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-bottom:8px}
+.mpf{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--amb),var(--acc));transition:width 0.5s}
+.mlbl{display:flex;justify-content:space-between;font-size:11px;color:var(--txt3)}
+.meta{background:var(--amb-bg);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:12px;color:var(--amb);font-weight:500}
+.mquote{background:var(--bg3);border-radius:10px;padding:10px 12px;margin-top:8px;border-left:2px solid var(--amb);font-size:12px;color:var(--txt2);font-style:italic;line-height:1.5}
+/* WEEK CARD */
+.wcard{background:var(--sur);border-radius:14px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px}
+.wlbl{font-size:11px;color:var(--txt3);margin-bottom:10px;font-weight:500}
+.wcks{display:flex;gap:6px;flex-wrap:wrap}
 .wck{width:36px;height:36px;border-radius:9px;border:1.5px solid var(--bdr2);background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all 0.2s;color:var(--bg)}
 .wck.done{background:var(--acc);border-color:var(--acc)}
-.tips-card{background:var(--sur);border-radius:14px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px}
-.tips-lbl{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
-.tip-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr)}
-.tip-row:last-child{border-bottom:none}
-.tip-ico{font-size:16px;flex-shrink:0}
-.tip-txt{font-size:13px;color:var(--txt2);line-height:1.5}
-.hist-card{background:var(--sur);border-radius:14px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px}
-.hist-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bdr)}
-.hist-row:last-child{border-bottom:none}
-.del-btn{width:100%;padding:12px;border-radius:12px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);color:var(--red);font-size:13px;cursor:pointer;font-family:var(--f);font-weight:600;margin-top:8px}
-.miss-btn{width:100%;padding:12px;border-radius:12px;background:var(--bg3);border:1px solid var(--bdr2);color:var(--txt2);font-size:13px;cursor:pointer;font-family:var(--f);font-weight:500;margin-bottom:8px}
+/* TIPS */
+.tcard{background:var(--sur);border-radius:14px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px}
+.tlbl{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.trow{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr)}
+.trow:last-child{border-bottom:none}
+.tico{font-size:16px;flex-shrink:0}
+.ttxt{font-size:13px;color:var(--txt2);line-height:1.5}
+/* HISTORY */
+.hcard{background:var(--sur);border-radius:14px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px}
+.hrow{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bdr)}
+.hrow:last-child{border-bottom:none}
+.delbtn{width:100%;padding:12px;border-radius:12px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);color:var(--red);font-size:13px;cursor:pointer;font-family:var(--f);font-weight:600;margin-top:8px}
+.missbtn{width:100%;padding:12px;border-radius:12px;background:var(--bg3);border:1px solid var(--bdr2);color:var(--txt2);font-size:13px;cursor:pointer;font-family:var(--f);font-weight:500;margin-bottom:8px}
+/* ALARM */
 .acard{background:var(--sur);border-radius:14px;border:1px solid var(--bdr);padding:14px;margin-bottom:10px}
-.acard-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-.atime-big{font-size:44px;font-weight:300;letter-spacing:-2px;color:var(--txt);line-height:1;cursor:pointer}
-.atime-big:hover{color:var(--acc)}
+.acard-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.atime{font-size:44px;font-weight:300;letter-spacing:-2px;line-height:1;cursor:pointer}
+.atime:hover{color:var(--acc)}
 .albl{font-size:12px;color:var(--txt3);margin-top:4px}
-.alarm-toggle{display:flex;align-items:center;gap:8px}
-.toggle-sw{width:42px;height:24px;border-radius:12px;background:var(--bg3);border:none;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0}
-.toggle-sw.on{background:var(--acc)}
-.toggle-sw::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.3)}
-.toggle-sw.on::after{transform:translateX(18px)}
-.alarm-del{background:none;border:none;color:var(--txt3);font-size:18px;cursor:pointer;padding:4px}
+.atoggle-row{display:flex;align-items:center;gap:8px}
+.toggle{width:42px;height:24px;border-radius:12px;background:var(--bg3);border:none;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0}
+.toggle.on{background:var(--acc)}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+.toggle.on::after{transform:translateX(18px)}
+.adel{background:none;border:none;color:var(--txt3);font-size:18px;cursor:pointer;padding:4px}
 .aquote{background:var(--bg3);border-radius:10px;padding:10px 12px;margin-top:10px;border-left:2px solid var(--acc)}
 .aqtxt{font-size:13px;color:var(--txt2);font-style:italic;line-height:1.5}
 .aqauth{font-size:11px;color:var(--txt3);margin-top:4px}
@@ -186,14 +198,16 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
 .schip{padding:6px 12px;border-radius:20px;border:1px solid var(--bdr);background:none;font-size:11px;color:var(--txt2);cursor:pointer;font-family:var(--f)}
 .schip.active{background:var(--acc);border-color:var(--acc);color:var(--bg);font-weight:600}
 .aadd{width:100%;padding:13px;border-radius:13px;background:var(--sur);border:1px solid var(--bdr2);color:var(--txt2);font-size:14px;cursor:pointer;font-family:var(--f);margin-top:4px}
+/* STATS */
 .stat-big{background:var(--sur);border-radius:16px;border:1px solid var(--bdr);padding:16px;margin-bottom:10px}
 .stat-big-n{font-size:36px;font-weight:700;line-height:1}
-.stat-row2{display:flex;gap:8px;margin-bottom:10px}
+.stat2row{display:flex;gap:8px;margin-bottom:10px}
 .stat2{flex:1;background:var(--sur);border-radius:12px;border:1px solid var(--bdr);padding:12px}
-.bar-chart{display:flex;gap:4px;align-items:flex-end;height:60px;margin-top:10px}
-.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.barchart{display:flex;gap:4px;align-items:flex-end;height:60px;margin-top:10px}
+.barcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
 .bar{width:100%;border-radius:4px 4px 0 0;background:var(--acc);opacity:0.7;min-height:3px}
-.bar-lbl{font-size:9px;color:var(--txt3)}
+.barlbl{font-size:9px;color:var(--txt3)}
+/* TABBAR */
 .tabbar{position:absolute;bottom:0;left:0;right:0;height:calc(60px + var(--sf-bot));padding-bottom:var(--sf-bot);background:rgba(15,17,23,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--bdr);display:flex;z-index:20}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--txt3);border:none;background:none;padding-top:5px;font-family:var(--f)}
 .tab.active{color:var(--acc)}
@@ -202,18 +216,19 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
 .tab.center .cw{width:46px;height:46px;border-radius:14px;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:22px;margin-top:-9px;box-shadow:0 4px 16px var(--glow)}
 .tab.center .cw span{color:var(--bg)}
 .tab.center:active .cw{transform:scale(0.93)}
-.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:40;display:none;align-items:flex-end}
-.modal-bg.show{display:flex}
+/* MODALS */
+.mbg{position:absolute;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:40;display:none;align-items:flex-end}
+.mbg.show{display:flex}
 .modal{background:var(--bg2);border-radius:22px 22px 0 0;border-top:1px solid var(--bdr2);padding:18px 18px calc(18px + var(--sf-bot));width:100%;max-height:82vh;overflow-y:auto}
 .mhandle{width:34px;height:3px;background:var(--bdr2);border-radius:2px;margin:0 auto 18px}
 .modal h3{font-size:16px;font-weight:700;margin-bottom:14px}
 .modal input,.modal select{width:100%;background:var(--sur);border:1px solid var(--bdr);border-radius:11px;padding:11px 13px;font-size:14px;color:var(--txt);margin-bottom:9px;outline:none;font-family:var(--f)}
 .modal input:focus{border-color:var(--acc)}
 .modal input::placeholder{color:var(--txt3)}
-.mrow2{display:flex;gap:8px}.mrow2 input{flex:1}
 .mbtns{display:flex;gap:7px;margin-top:4px}
 .bcancel{flex:1;background:var(--sur);border:none;border-radius:11px;padding:12px;font-size:14px;color:var(--txt2);cursor:pointer;font-family:var(--f);font-weight:500}
 .bok{flex:2;background:var(--acc);border:none;border-radius:11px;padding:12px;font-size:14px;color:var(--bg);cursor:pointer;font-family:var(--f);font-weight:700}
+/* TOAST */
 .toast{position:absolute;top:calc(var(--sf-top)+56px);left:50%;transform:translateX(-50%) translateY(-6px);background:var(--sur2);color:var(--txt);padding:9px 16px;border-radius:18px;font-size:13px;font-weight:500;z-index:60;opacity:0;transition:all 0.25s;pointer-events:none;white-space:nowrap;border:1px solid var(--bdr2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
@@ -232,11 +247,11 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
 <div class="screen" id="screen-input">
   <div class="topbar"><div><div class="tt">Eingabe</div><div class="ts">Ziele · To-Dos · Termine · Abhaken</div></div></div>
   <div class="input-inner">
-    <div class="input-tabs">
+    <div class="itabs">
       <button class="itab active" id="itab-voice" onclick="setInputTab('voice')">🎤 Sprache</button>
       <button class="itab" id="itab-text" onclick="setInputTab('text')">✏️ Text</button>
     </div>
-    <div id="voice-pane" class="voice-pane">
+    <div id="vpane" class="vpane">
       <div class="waves" id="waves"><div class="wv"></div><div class="wv"></div><div class="wv"></div><div class="wv"></div></div>
       <div class="vring" id="vring"><button class="vbtn" id="vbtn" onclick="toggleVoice()">🎤</button></div>
       <div class="vlbl" id="vlbl">Tippen zum Starten</div>
@@ -247,10 +262,10 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
       <div class="ai-head"><div class="aid"></div><span>FlowMind KI</span></div>
       <div class="ai-msgs" id="aiMsgs"></div>
     </div>
-    <div id="text-input-area" style="display:none;flex-direction:column;gap:8px;flex-shrink:0">
-      <div class="text-input-row">
+    <div id="tpane" style="display:none;flex-direction:column;gap:8px;flex-shrink:0">
+      <div class="tirow">
         <textarea class="tinput" id="textInput" rows="1" placeholder="Nachricht eingeben..." oninput="autoResize(this)"></textarea>
-        <button class="send-btn" onclick="sendText()">↑</button>
+        <button class="sbtn" onclick="sendText()">↑</button>
       </div>
     </div>
   </div>
@@ -259,9 +274,9 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
 <div class="screen" id="screen-cal">
   <div class="topbar"><div><div class="tt">Kalender</div><div class="ts" id="cal-sub">Termine</div></div></div>
   <div class="pad">
-    <div class="cal-header">
+    <div class="cal-hdr">
       <button class="cal-nav" onclick="calNav(-1)">‹</button>
-      <div class="cal-title" id="cal-title"></div>
+      <div class="cal-ttl" id="cal-title"></div>
       <button class="cal-nav" onclick="calNav(1)">›</button>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
@@ -297,7 +312,7 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
   <button class="tab" id="tab-stats" onclick="switchTab('stats')"><span class="tabi">📈</span><span class="tabl">Stats</span></button>
 </div>
 
-<div class="modal-bg" id="alarmModal">
+<div class="mbg" id="alarmModal">
   <div class="modal"><div class="mhandle"></div><h3>Wecker hinzufügen</h3>
     <input type="time" id="al-t" style="color-scheme:dark"/>
     <input type="text" id="al-l" placeholder="Bezeichnung"/>
@@ -307,1129 +322,789 @@ html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);
     <div class="mbtns"><button class="bcancel" onclick="closeModal('alarmModal')">Abbrechen</button><button class="bok" onclick="saveAlarm()">Speichern</button></div>
   </div>
 </div>
-
-<div class="modal-bg" id="editAlarmModal">
+<div class="mbg" id="editAlarmModal">
   <div class="modal"><div class="mhandle"></div><h3>Wecker bearbeiten</h3>
     <input type="time" id="eal-t" style="color-scheme:dark"/>
     <input type="text" id="eal-l" placeholder="Bezeichnung"/>
     <div class="mbtns"><button class="bcancel" onclick="closeModal('editAlarmModal')">Abbrechen</button><button class="bok" onclick="updateAlarm()">Speichern</button></div>
   </div>
 </div>
-
-<div class="modal-bg" id="missModal">
+<div class="mbg" id="missModal">
   <div class="modal"><div class="mhandle"></div><h3 id="miss-title">Woche nicht erfüllt?</h3>
     <p style="font-size:13px;color:var(--txt2);margin-bottom:12px;line-height:1.6">Was war der Grund?</p>
     <input type="text" id="miss-reason" placeholder="z.B. Krank, Reise..."/>
     <div class="mbtns"><button class="bcancel" onclick="closeModal('missModal')">Abbrechen</button><button class="bok" onclick="saveMiss()">Notieren</button></div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 </div>
 
 <script>
-const KEY='fm8';
-let S={goals:[],todos:[],apts:[],alarms:[],weeklyHistory:{}};
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-function load(){try{const d=localStorage.getItem(KEY);if(d)S={...S,...JSON.parse(d)}}catch(e){}}
-function pad(n){return String(n).padStart(2,'0')}
-function tick(){const n=new Date();document.getElementById('clock').textContent=pad(n.getHours())+':'+pad(n.getMinutes())}
-setInterval(tick,10000);tick();
-function todayStr(){const n=new Date();return n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate())}
-function getWeekKey(){const n=new Date(),d=new Date(n);d.setDate(d.getDate()-d.getDay());return d.toISOString().slice(0,10)}
-function fmt(n){return Number(n).toLocaleString('de-DE')}
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const STORE_KEY = 'fm9';
+let S = { goals:[], todos:[], apts:[], alarms:[], weeklyHistory:{} };
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){} }
+function load(){ try{ const d=localStorage.getItem(STORE_KEY); if(d) S={...S,...JSON.parse(d)}; }catch(e){} }
+function pad(n){ return String(n).padStart(2,'0'); }
+function todayStr(){ const n=new Date(); return n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate()); }
+function getWeekKey(){ const n=new Date(),d=new Date(n); d.setDate(d.getDate()-d.getDay()); return d.toISOString().slice(0,10); }
+function fmt(n){ return Number(n).toLocaleString('de-DE'); }
 
-// NAV
-let cur='overview';
-function switchTab(t){
+// Clock
+function tick(){ const n=new Date(); document.getElementById('clock').textContent=pad(n.getHours())+':'+pad(n.getMinutes()); }
+setInterval(tick, 10000); tick();
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+let currentTab = 'overview';
+function switchTab(t) {
   document.getElementById('goal-overlay').classList.remove('show');
-  cur=t;
-  document.querySelectorAll('.screen:not(.overlay)').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  currentTab = t;
+  document.querySelectorAll('.screen:not(.overlay)').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('active'); });
   document.getElementById('screen-'+t).classList.add('active');
-  const tel=document.getElementById('tab-'+t);if(tel)tel.classList.add('active');
-  if(t==='overview')renderOverview();
-  if(t==='alarm')renderAlarms();
-  if(t==='cal')renderCal();
-  if(t==='stats')renderStats();
+  var tel = document.getElementById('tab-'+t);
+  if(tel) tel.classList.add('active');
+  if(t==='overview') renderOverview();
+  if(t==='alarm') renderAlarms();
+  if(t==='cal') renderCal();
+  if(t==='stats') renderStats();
 }
 
+// ═══════════════════════════════════════════════
 // INPUT TABS
-let inputTab='voice';
-function setInputTab(t){
-  inputTab=t;
-  document.getElementById('itab-voice').classList.toggle('active',t==='voice');
-  document.getElementById('itab-text').classList.toggle('active',t==='text');
-  document.getElementById('voice-pane').style.display=t==='voice'?'flex':'none';
-  document.getElementById('text-input-area').style.display=t==='text'?'flex':'none';
-  if(t==='text'){
+// ═══════════════════════════════════════════════
+let inputTab = 'voice';
+function setInputTab(t) {
+  inputTab = t;
+  document.getElementById('itab-voice').classList.toggle('active', t==='voice');
+  document.getElementById('itab-text').classList.toggle('active', t==='text');
+  document.getElementById('vpane').style.display = t==='voice' ? 'flex' : 'none';
+  document.getElementById('tpane').style.display = t==='text' ? 'flex' : 'none';
+  if(t==='text') {
     document.getElementById('aiArea').classList.add('show');
-    if(document.getElementById('aiMsgs').children.length===0){
-      showAI('ai','Hallo! Tippe dein Ziel, To-Do oder Termin.\n\nBeispiele:\n· "5x die Woche trainieren"\n· "Täglich 10 Min meditieren"\n· "Physiktest am 3.7.2026 um 15:30 Uhr"\n· "Geburtstag Papa am 15.8. jährlich"\n· "Ich habe heute trainiert"\n· "Was steht heute an?"');
+    if(document.getElementById('aiMsgs').children.length === 0) {
+      showAI('ai', 'Hallo! Was möchtest du heute angehen?\n\nBeispiele:\n· "Ich möchte 10.000 Euro sparen"\n· "Schwester vom Fußball abholen"\n· "Zahnarzt Montag um 14 Uhr"\n· "Urlaub 10.7. bis 20.7. Mallorca"\n· "Ich habe heute trainiert"\n· "Was steht heute an?"');
     }
   }
 }
-function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
-function sendText(){
-  const v=document.getElementById('textInput').value.trim();
-  if(!v)return;
-  document.getElementById('textInput').value='';
-  document.getElementById('textInput').style.height='auto';
+function autoResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
+function sendText() {
+  var v = document.getElementById('textInput').value.trim();
+  if(!v) return;
+  document.getElementById('textInput').value = '';
+  document.getElementById('textInput').style.height = 'auto';
   handleInput(v);
 }
-document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&!e.shiftKey&&inputTab==='text'&&document.activeElement===document.getElementById('textInput')){
-    e.preventDefault();sendText();
+document.addEventListener('keydown', function(e) {
+  if(e.key==='Enter' && !e.shiftKey && inputTab==='text' && document.activeElement===document.getElementById('textInput')) {
+    e.preventDefault(); sendText();
   }
 });
 
+// ═══════════════════════════════════════════════
 // DAILY RESET
-function resetDailyTodos(){
-  const today=todayStr();
-  S.todos=S.todos.filter(t=>{
-    if(t.done&&t.createdDate&&t.createdDate!==today)return false;
-    if(!t.done&&t.createdDate&&t.createdDate!==today&&!t.recurring)return false;
+// ═══════════════════════════════════════════════
+function resetDailyTodos() {
+  var today = todayStr();
+  S.todos = S.todos.filter(function(t) {
+    if(t.done && t.createdDate && t.createdDate !== today) return false;
+    if(!t.done && t.createdDate && t.createdDate !== today && !t.recurring) return false;
     return true;
   });
-  S.todos.forEach(t=>{if(!t.createdDate)t.createdDate=today;});
+  S.todos.forEach(function(t){ if(!t.createdDate) t.createdDate = today; });
   save();
 }
 
+// ═══════════════════════════════════════════════
 // OVERVIEW
-function renderOverview(){
-  checkWeeklyReset();resetDailyTodos();checkMoneyGoals();
-  const today=todayStr();
-  const ag=S.goals.filter(g=>!g.archived);
-  const todayApts=S.apts.filter(a=>{
-    if(a.datetime.startsWith(today))return true;
-    if(a.recurrence==='yearly'){const d=new Date(a.datetime),n=new Date();return d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();}
-    if(a.recurrence==='weekly'){const d=new Date(a.datetime);return d.getDay()===new Date().getDay();}
-    return false;
-  }).sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
-  const todayTodos=S.todos;
-  const open=todayTodos.filter(t=>!t.done).length;
-  document.getElementById('ov-sub').textContent=ag.length+' Ziele · '+open+' offen · '+todayApts.length+' Termine heute';
-  const tc=ag.filter(g=>g.reps>0).reduce((a,g)=>a+(g.isDaily?7:g.reps),0);
-  const dc=ag.filter(g=>g.reps>0).reduce((a,g)=>a+(g.weekChecks||0),0);
-  document.getElementById('stat-row').innerHTML=`<div class="sc"><div class="sn">${ag.length}</div><div class="sl">Ziele</div></div><div class="sc"><div class="sn">${open}</div><div class="sl">Heute offen</div></div><div class="sc"><div class="sn">${tc>0?Math.round(dc/tc*100):0}%</div><div class="sl">Diese Woche</div><div class="str">↑ 1%</div></div>`;
-  const grid=document.getElementById('ov-grid');
-  let gh='<div class="col"><div class="col-h">🎯 Ziele <span class="badge">'+ag.length+'</span></div>';
-  if(ag.length===0)gh+='<div class="empty"><p>Noch keine Ziele.<br>Tippe auf ✦.</p></div>';
-  else ag.forEach(g=>{gh+=goalCard(g,S.goals.indexOf(g));});
-  gh+='</div>';
-  let th='<div class="col"><div class="col-h">✅ Heute <span class="badge">'+(todayApts.length+todayTodos.length)+'</span></div>';
-  todayApts.forEach(a=>{
-    const dt=new Date(a.datetime);
-    th+=`<div class="tc apt-item"><span class="tct">${pad(dt.getHours())}:${pad(dt.getMinutes())} ${a.title}</span><span class="apt-icon">📅</span></div>`;
-  });
-  if(todayTodos.length===0&&todayApts.length===0)th+='<div class="empty"><p>Alles erledigt! 🎉</p></div>';
-  todayTodos.forEach(t=>{th+=todoCard(t);});
-  th+='</div>';
-  grid.innerHTML=gh+th;
-  grid.querySelectorAll('[data-gi][data-ci]').forEach(el=>el.addEventListener('click',function(e){e.stopPropagation();toggleCheck(+this.dataset.gi,+this.dataset.ci);}));
-  grid.querySelectorAll('[data-tid]').forEach(el=>el.addEventListener('click',function(){toggleTodo(this.dataset.tid);}));
-  grid.querySelectorAll('[data-open-goal]').forEach(el=>el.addEventListener('click',function(){openGoalOverlay(+this.dataset.openGoal);}));
-}
-
-function checkWeeklyReset(){
-  const wk=getWeekKey();
-  S.goals.forEach(g=>{
-    if(g.lastWeekKey&&g.lastWeekKey!==wk){
-      if(!S.weeklyHistory[g.id])S.weeklyHistory[g.id]=[];
-      S.weeklyHistory[g.id].push({week:g.lastWeekKey,done:g.weekChecks||0,reps:g.isDaily?7:g.reps||0});
-      g.weekChecks=0;
+// ═══════════════════════════════════════════════
+function checkWeeklyReset() {
+  var wk = getWeekKey();
+  S.goals.forEach(function(g) {
+    if(g.lastWeekKey && g.lastWeekKey !== wk) {
+      if(!S.weeklyHistory[g.id]) S.weeklyHistory[g.id] = [];
+      S.weeklyHistory[g.id].push({ week:g.lastWeekKey, done:g.weekChecks||0, reps:g.isDaily?7:(g.reps||0) });
+      g.weekChecks = 0;
     }
-    g.lastWeekKey=wk;
+    g.lastWeekKey = wk;
   });
   save();
 }
 
-// Auto-complete money goals when target reached
-function checkMoneyGoals(){
-  S.goals.forEach(g=>{
-    if(g.isMoney&&!g.archived&&g.targetAmount>0&&(g.savedAmount||0)>=g.targetAmount){
-      if(!g.autoCompleted){g.autoCompleted=true;g.archived=true;showToast('🎉 Sparziel erreicht: '+g.title);}
+function checkMoneyGoals() {
+  S.goals.forEach(function(g) {
+    if(g.isMoney && !g.archived && g.targetAmount > 0 && (g.savedAmount||0) >= g.targetAmount) {
+      if(!g.autoCompleted) { g.autoCompleted=true; g.archived=true; showToast('🎉 Sparziel erreicht: '+g.title); }
     }
   });
 }
 
-function goalCard(g,gi){
-  const reps=g.isDaily?7:g.reps||0;
-  const done=g.weekChecks||0;
-  const pct=reps>0?Math.round(done/reps*100):0;
-  // Money goal - no checkboxes
-  if(g.isMoney){
-    const saved=g.savedAmount||0,target=g.targetAmount||0,mpct=target>0?Math.min(100,Math.round(saved/target*100)):0;
-    return `<div class="gc" data-open-goal="${gi}"><div class="gct"><span class="ge">${g.emoji||'💰'}</span><span class="gtitle">${g.title}</span><span class="gpct">${mpct}%</span></div><div class="gpbar"><div class="gpfill" style="width:${mpct}%;background:linear-gradient(90deg,var(--amb),var(--acc))"></div></div><div class="money-mini">💰 ${fmt(saved)} / ${fmt(target)} €</div><div class="week-badge">Tippen für Details</div></div>`;
-  }
-  // No reps = no checkboxes (open-ended goal)
-  if(reps===0){
-    return `<div class="gc" data-open-goal="${gi}"><div class="gct"><span class="ge">${g.emoji||'🎯'}</span><span class="gtitle">${g.title}</span></div><div class="week-badge">Langzeitziel</div></div>`;
-  }
-  // Checkboxes matching exact reps
-  let cks='';
-  for(let i=0;i<reps;i++){const d=i<done;cks+=`<div class="ck${d?' done':''}" data-gi="${gi}" data-ci="${i}">${d?'✓':''}</div>`;}
-  const badge=g.isDaily?'<div class="daily-badge">🔁 Täglich</div>':'<div class="week-badge">🔄 '+reps+'× Woche</div>';
-  return `<div class="gc" data-open-goal="${gi}"><div class="gct"><span class="ge">${g.emoji||'🎯'}</span><span class="gtitle">${g.title}</span><span class="gpct">${pct}%</span></div><div class="checks">${cks}</div><div class="gpbar"><div class="gpfill" style="width:${pct}%"></div></div>${badge}</div>`;
+function renderOverview() {
+  checkWeeklyReset(); resetDailyTodos(); checkMoneyGoals();
+  var today = todayStr();
+  var ag = S.goals.filter(function(g){ return !g.archived; });
+  var todayApts = S.apts.filter(function(a) {
+    if(a.datetime.startsWith(today)) return true;
+    var ad = new Date(a.datetime), n = new Date();
+    if(a.recurrence==='yearly' && ad.getMonth()===n.getMonth() && ad.getDate()===n.getDate()) return true;
+    if(a.recurrence==='weekly' && ad.getDay()===n.getDay()) return true;
+    return false;
+  }).sort(function(a,b){ return new Date(a.datetime)-new Date(b.datetime); });
+  var todayTodos = S.todos;
+  var open = todayTodos.filter(function(t){ return !t.done; }).length;
+  document.getElementById('ov-sub').textContent = ag.length+' Ziele · '+open+' offen · '+todayApts.length+' Termine heute';
+  var tc = ag.filter(function(g){ return g.reps>0; }).reduce(function(a,g){ return a+(g.isDaily?7:g.reps); }, 0);
+  var dc = ag.filter(function(g){ return g.reps>0; }).reduce(function(a,g){ return a+(g.weekChecks||0); }, 0);
+  document.getElementById('stat-row').innerHTML =
+    '<div class="sc"><div class="sn">'+ag.length+'</div><div class="sl">Ziele</div></div>'+
+    '<div class="sc"><div class="sn">'+open+'</div><div class="sl">Heute offen</div></div>'+
+    '<div class="sc"><div class="sn">'+(tc>0?Math.round(dc/tc*100):0)+'%</div><div class="sl">Diese Woche</div><div class="str">↑ 1%</div></div>';
+
+  var grid = document.getElementById('ov-grid');
+  var gh = '<div class="col"><div class="col-h">🎯 Ziele <span class="bdg">'+ag.length+'</span></div>';
+  if(ag.length===0) gh += '<div class="empty"><p>Noch keine Ziele.<br>Tippe auf ✦.</p></div>';
+  else ag.forEach(function(g){ gh += goalCard(g, S.goals.indexOf(g)); });
+  gh += '</div>';
+
+  var th = '<div class="col"><div class="col-h">✅ Heute <span class="bdg">'+(todayApts.length+todayTodos.length)+'</span></div>';
+  todayApts.forEach(function(a) {
+    var dt = new Date(a.datetime);
+    th += '<div class="tc apt"><span class="tct">'+pad(dt.getHours())+':'+pad(dt.getMinutes())+' '+a.title+'</span><span class="apticon">📅</span></div>';
+  });
+  if(todayTodos.length===0 && todayApts.length===0) th += '<div class="empty"><p>Alles erledigt! 🎉</p></div>';
+  todayTodos.forEach(function(t){ th += todoCard(t); });
+  th += '</div>';
+  grid.innerHTML = gh + th;
+
+  grid.querySelectorAll('[data-gi][data-ci]').forEach(function(el) {
+    el.addEventListener('click', function(e){ e.stopPropagation(); toggleCheck(+this.dataset.gi, +this.dataset.ci); });
+  });
+  grid.querySelectorAll('[data-tid]').forEach(function(el) {
+    el.addEventListener('click', function(){ toggleTodo(this.dataset.tid); });
+  });
+  grid.querySelectorAll('[data-open-goal]').forEach(function(el) {
+    el.addEventListener('click', function(){ openGoalOverlay(+this.dataset.openGoal); });
+  });
 }
 
-function todoCard(t){return `<div class="tc" data-tid="${t.id}"><div class="tcc${t.done?' done':''}">${t.done?'✓':''}</div><span class="tct${t.done?' done':''}">${t.title}</span>${t.time?`<span class="ttime">${t.time}</span>`:''}</div>`;}
-function toggleCheck(gi,ci){const g=S.goals[gi];if(!g)return;const d=g.weekChecks||0;if(ci===d){g.weekChecks=d+1;showToast('✓ Abgehakt!');}else if(ci===d-1){g.weekChecks=Math.max(0,d-1);}save();renderOverview();}
-function toggleTodo(id){const t=S.todos.find(x=>x.id===id);if(t){t.done=!t.done;save();renderOverview();}}
+function goalCard(g, gi) {
+  var reps = g.isDaily ? 7 : (g.reps||0);
+  var done = g.weekChecks || 0;
+  var pct = reps > 0 ? Math.round(done/reps*100) : 0;
+  if(g.isMoney) {
+    var saved = g.savedAmount||0, target = g.targetAmount||0;
+    var mpct = target > 0 ? Math.min(100, Math.round(saved/target*100)) : 0;
+    return '<div class="gc" data-open-goal="'+gi+'"><div class="gct"><span class="ge">'+g.emoji+'</span><span class="gtitle">'+g.title+'</span><span class="gpct">'+mpct+'%</span></div><div class="gpbar"><div class="gpfill" style="width:'+mpct+'%;background:linear-gradient(90deg,var(--amb),var(--acc))"></div></div><div class="mmini">💰 '+fmt(saved)+' / '+fmt(target)+' €</div><div class="wbdg">Tippen für Details</div></div>';
+  }
+  if(reps === 0) {
+    return '<div class="gc" data-open-goal="'+gi+'"><div class="gct"><span class="ge">'+g.emoji+'</span><span class="gtitle">'+g.title+'</span></div><div class="wbdg">Langzeitziel</div></div>';
+  }
+  var cks = '';
+  for(var i=0; i<reps; i++) {
+    var d = i < done;
+    cks += '<div class="ck'+(d?' done':'')+'" data-gi="'+gi+'" data-ci="'+i+'">'+(d?'✓':'')+'</div>';
+  }
+  var badge = g.isDaily ? '<div class="dbdg">🔁 Täglich</div>' : '<div class="wbdg">🔄 '+reps+'× Woche</div>';
+  return '<div class="gc" data-open-goal="'+gi+'"><div class="gct"><span class="ge">'+g.emoji+'</span><span class="gtitle">'+g.title+'</span><span class="gpct">'+pct+'%</span></div><div class="checks">'+cks+'</div><div class="gpbar"><div class="gpfill" style="width:'+pct+'%"></div></div>'+badge+'</div>';
+}
 
+function todoCard(t) {
+  return '<div class="tc" data-tid="'+t.id+'"><div class="tcc'+(t.done?' done':'')+'">'+(t.done?'✓':'')+'</div><span class="tct'+(t.done?' done':'')+'">'+t.title+'</span>'+(t.time?'<span class="ttime">'+t.time+'</span>':'')+'</div>';
+}
+
+function toggleCheck(gi, ci) {
+  var g = S.goals[gi]; if(!g) return;
+  var d = g.weekChecks || 0;
+  if(ci===d) { g.weekChecks=d+1; showToast('✓ Abgehakt!'); }
+  else if(ci===d-1) { g.weekChecks=Math.max(0,d-1); }
+  save(); renderOverview();
+}
+
+function toggleTodo(id) {
+  var t = S.todos.find(function(x){ return x.id===id; });
+  if(t) { t.done=!t.done; save(); renderOverview(); }
+}
+
+// ═══════════════════════════════════════════════
 // GOAL OVERLAY
-let ovGi=-1,missGi=-1,editAlarmIdx=-1;
-function openGoalOverlay(gi){
-  ovGi=gi;const g=S.goals[gi];if(!g)return;
-  document.getElementById('ov-title').textContent=g.title;
-  document.getElementById('ov-emoji').textContent=g.emoji||'🎯';
+// ═══════════════════════════════════════════════
+var ovGi = -1, missGi = -1, editAlarmIdx = -1;
+
+function openGoalOverlay(gi) {
+  ovGi = gi;
+  var g = S.goals[gi]; if(!g) return;
+  document.getElementById('ov-title').textContent = g.title;
+  document.getElementById('ov-emoji').textContent = g.emoji || '🎯';
   renderGoalDetail(gi);
   document.getElementById('goal-overlay').classList.add('show');
 }
-function closeGoalOverlay(){document.getElementById('goal-overlay').classList.remove('show');renderOverview();}
+function closeGoalOverlay() { document.getElementById('goal-overlay').classList.remove('show'); renderOverview(); }
 
-function deleteGoal(gi){
-  if(confirm('Ziel "'+S.goals[gi].title+'" wirklich löschen?')){
-    S.goals.splice(gi,1);save();closeGoalOverlay();renderOverview();showToast('🗑️ Ziel gelöscht');
+function deleteGoal(gi) {
+  if(confirm('Ziel "'+S.goals[gi].title+'" wirklich löschen?')) {
+    S.goals.splice(gi,1); save(); closeGoalOverlay(); showToast('🗑️ Ziel gelöscht');
   }
 }
 
-function renderGoalDetail(gi){
-  const g=S.goals[gi];
-  const reps=g.isDaily?7:g.reps||0;
-  const done=g.weekChecks||0;
-  const pct=reps>0?Math.round(done/reps*100):0;
-  const hist=S.weeklyHistory[g.id]||[];
-  const tips=getTips(g.title);
-  let topHtml='';
-  if(g.isMoney){
-    const saved=g.savedAmount||0,target=g.targetAmount||0,mpct=target>0?Math.min(100,Math.round(saved/target*100)):0;
-    const avgWeekly=hist.length>0?saved/Math.max(1,hist.length):0;
-    const weeksLeft=avgWeekly>0&&target>saved?Math.ceil((target-saved)/avgWeekly):null;
-    const eta=weeksLeft?new Date(Date.now()+weeksLeft*7*24*3600*1000).toLocaleDateString('de-DE',{month:'long',year:'numeric'}):'–';
-    const mq=['Wer nicht spart, dem hilft auch das Einkommen nicht.','Spare in der Zeit, so hast du in der Not.','Finanzieller Erfolg ist Disziplin, nicht Glück.','Das Geld das du nicht ausgibst, arbeitet für dich.'][new Date().getDate()%4];
-    topHtml=`<div class="money-card"><div class="money-hdr"><div class="money-saved">${fmt(saved)} €</div><div class="money-target">Ziel: ${fmt(target)} €</div></div><div class="money-pb"><div class="money-pf" style="width:${mpct}%"></div></div><div class="money-lbl"><span>${mpct}%</span><span>Noch ${fmt(Math.max(0,target-saved))} €</span></div>${weeksLeft?`<div class="money-eta">📅 Voraussichtlich: <strong>${eta}</strong></div>`:''}<div class="money-quote">"${mq}"</div></div>`;
-  } else if(reps>0){
-    let wks='';for(let i=0;i<reps;i++){const d=i<done;wks+=`<div class="wck${d?' done':''}" onclick="toggleCheck(${gi},${i})">${d?'✓':''}</div>`;}
-    topHtml=`<div class="week-card"><div class="week-lbl">${g.isDaily?'🔁 Täglich':'🔄 Diese Woche'} – ${reps-done} noch offen</div><div class="week-cks">${wks}</div></div>`;
+function renderGoalDetail(gi) {
+  var g = S.goals[gi];
+  var reps = g.isDaily ? 7 : (g.reps||0);
+  var done = g.weekChecks || 0;
+  var pct = reps > 0 ? Math.round(done/reps*100) : 0;
+  var hist = S.weeklyHistory[g.id] || [];
+  var tips = getTips(g.title);
+  var topHtml = '';
+  if(g.isMoney) {
+    var saved = g.savedAmount||0, target = g.targetAmount||0;
+    var mpct = target > 0 ? Math.min(100,Math.round(saved/target*100)) : 0;
+    var avgWeekly = hist.length > 0 ? saved/Math.max(1,hist.length) : 0;
+    var weeksLeft = avgWeekly>0 && target>saved ? Math.ceil((target-saved)/avgWeekly) : null;
+    var eta = weeksLeft ? new Date(Date.now()+weeksLeft*7*24*3600*1000).toLocaleDateString('de-DE',{month:'long',year:'numeric'}) : '–';
+    var mqs = ['Wer nicht spart, dem hilft auch das Einkommen nicht.','Spare in der Zeit, so hast du in der Not.','Finanzieller Erfolg ist Disziplin, nicht Glück.','Das Geld das du nicht ausgibst, arbeitet für dich.'];
+    var mq = mqs[new Date().getDate()%4];
+    topHtml = '<div class="mcard"><div class="mcard-hdr"><div class="msaved">'+fmt(saved)+' €</div><div class="mtarget">Ziel: '+fmt(target)+' €</div></div><div class="mpb"><div class="mpf" style="width:'+mpct+'%"></div></div><div class="mlbl"><span>'+mpct+'%</span><span>Noch '+fmt(Math.max(0,target-saved))+' €</span></div>'+(weeksLeft?'<div class="meta">📅 Voraussichtlich: <strong>'+eta+'</strong></div>':'')+'<div class="mquote">"'+mq+'"</div></div>';
+  } else if(reps > 0) {
+    var wks = '';
+    for(var i=0; i<reps; i++) {
+      var dd = i < done;
+      wks += '<div class="wck'+(dd?' done':'')+'" onclick="toggleCheck('+gi+','+i+')">'+(dd?'✓':'')+'</div>';
+    }
+    topHtml = '<div class="wcard"><div class="wlbl">'+(g.isDaily?'🔁 Täglich':'🔄 Diese Woche')+' – '+(reps-done)+' noch offen</div><div class="wcks">'+wks+'</div></div>';
   }
-  let histHtml='';
-  if(hist.length>0){
-    histHtml='<div class="hist-card"><div class="tips-lbl">Verlauf</div>';
-    [...hist].reverse().slice(0,5).forEach(h=>{
-      const p=h.reps>0?Math.round(h.done/h.reps*100):0;
-      const d=new Date(h.week);
-      histHtml+=`<div class="hist-row"><span style="font-size:12px;color:var(--txt2)">${d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})}</span><span style="font-size:12px;color:var(--txt2)">${h.done}/${h.reps}</span><span style="font-size:12px;font-weight:600;color:${p>=80?'var(--grn)':p>=50?'var(--acc)':'var(--red)'}">${p}%</span></div>`;
+  var histHtml = '';
+  if(hist.length > 0) {
+    histHtml = '<div class="hcard"><div class="tlbl">Verlauf</div>';
+    var histSlice = hist.slice().reverse().slice(0,5);
+    histSlice.forEach(function(h) {
+      var p = h.reps > 0 ? Math.round(h.done/h.reps*100) : 0;
+      var hd = new Date(h.week);
+      var col = p>=80 ? 'var(--grn)' : p>=50 ? 'var(--acc)' : 'var(--red)';
+      histHtml += '<div class="hrow"><span style="font-size:12px;color:var(--txt2)">'+hd.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+'</span><span style="font-size:12px;color:var(--txt2)">'+h.done+'/'+h.reps+'</span><span style="font-size:12px;font-weight:600;color:'+col+'">'+p+'%</span></div>';
     });
-    histHtml+='</div>';
+    histHtml += '</div>';
   }
-  let tipsHtml='<div class="tips-card"><div class="tips-lbl">Tipps</div>';
-  tips.forEach(t=>{tipsHtml+=`<div class="tip-row"><span class="tip-ico">${t.icon}</span><span class="tip-txt">${t.text}</span></div>`;});
-  tipsHtml+='</div>';
-  const dsRow=reps>0?`<div class="ds-row"><div class="ds"><div class="ds-n" style="color:var(--acc)">${pct}%</div><div class="ds-l">Fortschritt</div></div><div class="ds"><div class="ds-n">${done}/${reps}</div><div class="ds-l">Abgehakt</div></div><div class="ds"><div class="ds-n">${hist.length+1}</div><div class="ds-l">Wochen</div></div></div>`:'';
-  document.getElementById('ov-body').innerHTML=`${dsRow}${topHtml}${tipsHtml}${histHtml}<button class="miss-btn" onclick="openMiss(${gi})">Woche nicht eingehalten? Erklärung</button><button class="del-btn" onclick="deleteGoal(${gi})">🗑️ Ziel löschen</button>`;
+  var tipsHtml = '<div class="tcard"><div class="tlbl">Tipps</div>';
+  tips.forEach(function(tip){ tipsHtml += '<div class="trow"><span class="tico">'+tip.icon+'</span><span class="ttxt">'+tip.text+'</span></div>'; });
+  tipsHtml += '</div>';
+  var dsRow = reps > 0 ? '<div class="ds-row"><div class="ds"><div class="ds-n" style="color:var(--acc)">'+pct+'%</div><div class="ds-l">Fortschritt</div></div><div class="ds"><div class="ds-n">'+done+'/'+reps+'</div><div class="ds-l">Abgehakt</div></div><div class="ds"><div class="ds-n">'+(hist.length+1)+'</div><div class="ds-l">Wochen</div></div></div>' : '';
+  document.getElementById('ov-body').innerHTML = dsRow + topHtml + tipsHtml + histHtml + '<button class="missbtn" onclick="openMiss('+gi+')">Woche nicht eingehalten?</button><button class="delbtn" onclick="deleteGoal('+gi+')">🗑️ Ziel löschen</button>';
 }
 
-function openMiss(gi){missGi=gi;document.getElementById('miss-title').textContent=S.goals[gi].title;document.getElementById('miss-reason').value='';openModal('missModal');}
-function saveMiss(){const g=S.goals[missGi];if(!g)return;if(!g.missedWeeks)g.missedWeeks=[];g.missedWeeks.push({week:getWeekKey(),reason:document.getElementById('miss-reason').value.trim()});if(g.compensation)g.compensation++;else g.compensation=1;save();closeModal('missModal');showToast('📅 Notiert');if(ovGi===missGi)renderGoalDetail(ovGi);}
+function openMiss(gi){ missGi=gi; document.getElementById('miss-title').textContent=S.goals[gi].title; document.getElementById('miss-reason').value=''; openModal('missModal'); }
+function saveMiss(){
+  var g = S.goals[missGi]; if(!g) return;
+  if(!g.missedWeeks) g.missedWeeks=[];
+  g.missedWeeks.push({week:getWeekKey(), reason:document.getElementById('miss-reason').value.trim()});
+  if(g.compensation) g.compensation++; else g.compensation=1;
+  save(); closeModal('missModal'); showToast('📅 Notiert');
+  if(ovGi===missGi) renderGoalDetail(ovGi);
+}
 
-// DATE PARSER - comprehensive
-const MONTHS_DE={januar:1,februar:2,märz:3,april:4,mai:5,juni:6,juli:7,august:8,september:9,oktober:10,november:11,dezember:12};
-const ORDINALS_DE={ersten:1,zweiten:2,dritten:3,vierten:4,fünften:5,sechsten:6,siebten:7,achten:8,neunten:9,zehnten:10,elften:11,zwölften:12,dreizehnten:13,vierzehnten:14,fünfzehnten:15,sechzehnten:16,siebzehnten:17,achtzehnten:18,neunzehnten:19,zwanzigsten:20,einundzwanzigsten:21,zweiundzwanzigsten:22,dreiundzwanzigsten:23,vierundzwanzigsten:24,fünfundzwanzigsten:25,sechsundzwanzigsten:26,siebenundzwanzigsten:27,achtundzwanzigsten:28,neunundzwanzigsten:29,dreißigsten:30,einunddreißigsten:31};
-const MONTHS_NUM={1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,11:11,12:12};
+// ═══════════════════════════════════════════════
+// DATE PARSER
+// ═══════════════════════════════════════════════
+var ORDINALS_DE = {ersten:1,zweiten:2,dritten:3,vierten:4,fünften:5,sechsten:6,siebten:7,achten:8,neunten:9,zehnten:10,elften:11,zwölften:12,dreizehnten:13,vierzehnten:14,fünfzehnten:15,sechzehnten:16,siebzehnten:17,achtzehnten:18,neunzehnten:19,zwanzigsten:20,einundzwanzigsten:21,zweiundzwanzigsten:22,dreiundzwanzigsten:23,vierundzwanzigsten:24,fünfundzwanzigsten:25,sechsundzwanzigsten:26,siebenundzwanzigsten:27,achtundzwanzigsten:28,neunundzwanzigsten:29,dreißigsten:30,einunddreißigsten:31};
+var MONTHS_MAP = {januar:1,februar:2,'märz':3,april:4,mai:5,juni:6,juli:7,august:8,september:9,oktober:10,november:11,dezember:12};
 
-function parseDatetime(txt){
-  const now=new Date();
-  let day=null,month=null,year=null,hour=null,minute=0;
-
-  // 1) Explicit numeric date: dd.mm.yyyy or dd.mm.yy or dd/mm/yyyy
-  const numDate=txt.match(/(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})/);
-  if(numDate){
-    day=parseInt(numDate[1]);month=parseInt(numDate[2]);year=parseInt(numDate[3]);
-    if(year<100)year+=2000;
-  }
-
-  // 2) "am dritten siebten" or ordinal + month number
+function parseDatetime(txt) {
+  var now = new Date();
+  var day=null, month=null, year=null, hour=null, minute=0;
+  var numDate = txt.match(/(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})/);
+  if(numDate){ day=+numDate[1]; month=+numDate[2]; year=+numDate[3]; if(year<100) year+=2000; }
+  if(!day){ var re2=/(\d{1,2})\.\s*(\d{1,2})\./; var m2=txt.match(re2); if(m2){ day=+m2[1]; month=+m2[2]; } }
   if(!day){
-    const ordKeys=Object.keys(ORDINALS_DE).join('|');
-    const ordRe=new RegExp('('+ordKeys+')\\s+(\\d{1,2})\\.?','i');
-    const m=txt.match(ordRe);
-    if(m){day=ORDINALS_DE[m[1].toLowerCase()];month=parseInt(m[2]);}
+    var ordKeys = Object.keys(ORDINALS_DE).join('|');
+    var re3 = new RegExp('('+ordKeys+')\\s+(\\d{1,2})\\.?','i');
+    var m3 = txt.match(re3);
+    if(m3){ day=ORDINALS_DE[m3[1].toLowerCase()]; month=+m3[2]; }
   }
-
-  // 3) Ordinal + month name "dritten Juli"
   if(!day){
-    const ordKeys=Object.keys(ORDINALS_DE).join('|');
-    const monKeys=Object.keys(MONTHS_DE).join('|');
-    const re=new RegExp('('+ordKeys+')\\s+('+monKeys+')','i');
-    const m=txt.match(re);
-    if(m){day=ORDINALS_DE[m[1].toLowerCase()];month=MONTHS_DE[m[2].toLowerCase()];}
+    var ordKeys2 = Object.keys(ORDINALS_DE).join('|');
+    var monKeys = Object.keys(MONTHS_MAP).join('|');
+    var re4 = new RegExp('('+ordKeys2+')\\s+('+monKeys+')','i');
+    var m4 = txt.match(re4);
+    if(m4){ day=ORDINALS_DE[m4[1].toLowerCase()]; month=MONTHS_MAP[m4[2].toLowerCase()]; }
   }
-
-  // 4) "3. Juli" or "3.7."
   if(!day){
-    const re=/(\d{1,2})\.\s*(\d{1,2})\./;
-    const m=txt.match(re);
-    if(m){day=parseInt(m[1]);month=parseInt(m[2]);}
-  }
-
-  // 5) Relative
-  if(!day){
-    if(/übermorgen/i.test(txt)){const d=new Date(now);d.setDate(d.getDate()+2);day=d.getDate();month=d.getMonth()+1;year=d.getFullYear();}
-    else if(/morgen/i.test(txt)){const d=new Date(now);d.setDate(d.getDate()+1);day=d.getDate();month=d.getMonth()+1;year=d.getFullYear();}
-  }
-
-  // 6) Weekday
-  if(!day){
-    const wd={montag:1,dienstag:2,mittwoch:3,donnerstag:4,freitag:5,samstag:6,sonntag:0};
-    for(const[k,v]of Object.entries(wd)){
-      if(new RegExp(k,'i').test(txt)){
-        const d=nextWeekday(v);day=d.getDate();month=d.getMonth()+1;year=d.getFullYear();break;
+    var l = txt.toLowerCase();
+    if(/übermorgen/i.test(txt)){ var d2=new Date(now); d2.setDate(d2.getDate()+2); day=d2.getDate(); month=d2.getMonth()+1; year=d2.getFullYear(); }
+    else if(/morgen/i.test(txt)){ var d3=new Date(now); d3.setDate(d3.getDate()+1); day=d3.getDate(); month=d3.getMonth()+1; year=d3.getFullYear(); }
+    else {
+      var wdmap = {montag:1,dienstag:2,mittwoch:3,donnerstag:4,freitag:5,samstag:6,sonntag:0};
+      for(var k in wdmap){
+        if(new RegExp('\\b'+k+'\\b','i').test(txt)){ var nd=nextWeekday(wdmap[k]); day=nd.getDate(); month=nd.getMonth()+1; year=nd.getFullYear(); break; }
       }
     }
   }
-
-  if(!day)return null;
-  if(!year)year=now.getFullYear();
-  if(!month)month=now.getMonth()+1;
-
-  // TIME: "15:30 Uhr", "15.30 Uhr", "fünfzehn Uhr dreißig", "um 15 Uhr 30", "15 Uhr"
-  // Try HH:MM or HH.MM first
-  const timeColon=txt.match(/(\d{1,2})[:\.](\d{2})\s*(?:uhr)?/i);
-  const timeUhr=txt.match(/(\d{1,2})\s*uhr\s*(\d{1,2})?/i);
-  if(timeColon){hour=parseInt(timeColon[1]);minute=parseInt(timeColon[2]);}
-  else if(timeUhr){hour=parseInt(timeUhr[1]);minute=timeUhr[2]?parseInt(timeUhr[2]):0;}
-  if(hour===null)return null;
-
-  const dt=new Date(year,month-1,day,hour,minute,0,0);
-  return isNaN(dt.getTime())?null:dt;
+  if(!day) return null;
+  if(!year) year = now.getFullYear();
+  if(!month) month = now.getMonth()+1;
+  var tc = txt.match(/(\d{1,2})[:\.](\d{2})\s*(?:uhr)?/i);
+  var tu = txt.match(/\bum\s*(\d{1,2})\s*uhr\b/i) || txt.match(/(\d{1,2})\s*uhr\b/i);
+  if(tc){ hour=+tc[1]; minute=+tc[2]; }
+  else if(tu){ hour=+tu[1]; minute=0; }
+  else { hour=9; }
+  var dt = new Date(year, month-1, day, hour, minute, 0, 0);
+  return isNaN(dt.getTime()) ? null : dt;
 }
 
-function nextWeekday(wd){const d=new Date();const diff=(wd-d.getDay()+7)%7||7;d.setDate(d.getDate()+diff);return d;}
-function detectRecurrence(txt){
-  const l=txt.toLowerCase();
-  if(/jährlich|jedes jahr|geburtstag|jahrestag/.test(l))return'yearly';
-  if(/wöchentlich|jede woche/.test(l))return'weekly';
-  if(/monatlich|jeden monat/.test(l))return'monthly';
+function parseEndDate(txt) {
+  var bisDot = txt.match(/bis\s+(\d{1,2})[.\-](\d{1,2})(?:[.\-](\d{2,4}))?/i);
+  if(bisDot){ var d=+bisDot[1],m=+bisDot[2],y=bisDot[3]?+bisDot[3]:new Date().getFullYear(); if(y<100)y+=2000; return new Date(y,m-1,d,23,59,0,0); }
+  var ordKeys = Object.keys(ORDINALS_DE).join('|');
+  var monKeys = Object.keys(MONTHS_MAP).join('|');
+  var re = new RegExp('bis\\s+('+ordKeys+')\\s+('+monKeys+')','i');
+  var bm = txt.match(re);
+  if(bm){ var od=ORDINALS_DE[bm[1].toLowerCase()],mn=MONTHS_MAP[bm[2].toLowerCase()]; if(od&&mn) return new Date(new Date().getFullYear(),mn-1,od,23,59,0,0); }
   return null;
 }
 
-// CALENDAR
-let calY=new Date().getFullYear(),calM=new Date().getMonth(),calSel=todayStr();
-function calNav(d){calM+=d;if(calM>11){calM=0;calY++;}else if(calM<0){calM=11;calY--;}renderCal();}
-function renderCal(){
-  const months=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-  document.getElementById('cal-title').textContent=months[calM]+' '+calY;
-  const first=new Date(calY,calM,1),last=new Date(calY,calM+1,0);
-  let dow=first.getDay();if(dow===0)dow=7;dow--;
-  let g='';
-  ['Mo','Di','Mi','Do','Fr','Sa','So'].forEach(d=>{g+=`<div class="cal-dow">${d}</div>`;});
-  for(let i=0;i<dow;i++)g+=`<div class="cal-day other"></div>`;
-  for(let day=1;day<=last.getDate();day++){
-    const ds=calY+'-'+pad(calM+1)+'-'+pad(day);
-    const d=new Date(calY,calM,day);
-    const dayMs=d.getTime();
-    const haEv=S.apts.some(a=>{
-      if(a.datetime.startsWith(ds))return true;
-      const ad=new Date(a.datetime);
-      if(a.recurrence==='yearly'&&ad.getMonth()===calM&&ad.getDate()===day)return true;
-      if(a.recurrence==='weekly'&&ad.getDay()===d.getDay())return true;
-      // Multi-day: check if this day falls within event range
-      if(a.endDatetime){const ed=new Date(a.endDatetime);if(ad<=d&&ed>=d)return true;}
-      return false;
-    });
-    const isTd=ds===todayStr(),isSl=calSel===ds;
-    g+=`<div class="cal-day${isTd?' today':''}${haEv?' has-event':''}${isSl?' sel':''}" onclick="selectDay('${ds}')"><span>${day}</span><div class="cal-dot"></div></div>`;
-  }
-  document.getElementById('cal-grid').innerHTML=g;
-  renderCalDetail();
-  document.getElementById('cal-sub').textContent=S.apts.length+' Termine';
-}
-function selectDay(ds){calSel=ds;renderCal();}
-function renderCalDetail(){
-  const sel=new Date(calSel);
-  const evts=S.apts.filter(a=>{
-    if(a.datetime.startsWith(calSel))return true;
-    const ad=new Date(a.datetime);
-    if(a.recurrence==='yearly'&&ad.getMonth()===sel.getMonth()&&ad.getDate()===sel.getDate())return true;
-    if(a.recurrence==='weekly'&&ad.getDay()===sel.getDay())return true;
-    return false;
-  }).sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
-  let h=`<div class="cal-sel-hdr">${sel.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>`;
-  if(evts.length===0)h+=`<div style="text-align:center;padding:20px;font-size:13px;color:var(--txt3)">Keine Termine.</div>`;
-  else evts.forEach(a=>{
-    const dt=new Date(a.datetime);
-    const rl=a.recurrence==='yearly'?'🔁 Jährlich':a.recurrence==='weekly'?'🔁 Wöchentlich':a.recurrence==='monthly'?'🔁 Monatlich':'';
-    const isMulti=a.endDatetime&&a.endDatetime!==a.datetime;
-    const timeStr=isMulti?'Mehrtägig':pad(dt.getHours())+':'+pad(dt.getMinutes());
-    const endStr=isMulti?' bis '+new Date(a.endDatetime).toLocaleDateString('de-DE',{day:'numeric',month:'short'}):'';
-    h+=`<div class="cal-ev"><div class="cal-ev-time" style="${isMulti?'font-size:11px;color:var(--amb);font-weight:600':''}${isMulti?'':''}">${timeStr}</div><div><div class="cal-ev-title">${a.title}${endStr?'<span style="font-size:11px;color:var(--amb);margin-left:6px">'+endStr+'</span>':''}</div>${a.person?'<div class="cal-ev-sub">👤 '+a.person+'</div>':''}${rl?'<div class="cal-ev-recur">'+rl+'</div>':''}</div></div>`;
-  });
-  document.getElementById('cal-detail').innerHTML=h;
+function nextWeekday(wd) {
+  var d = new Date();
+  var diff = (wd - d.getDay() + 7) % 7 || 7;
+  d.setDate(d.getDate() + diff);
+  return d;
 }
 
-// VOICE
-let recog=null,listening=false;
-function toggleVoice(){if(listening)stopVoice();else startVoice();}
-function startVoice(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){showToast('Bitte Text-Tab nutzen');setInputTab('text');return;}
-  recog=new SR();recog.lang='de-DE';recog.continuous=false;recog.interimResults=true;listening=true;
-  document.getElementById('vbtn').classList.add('on');document.getElementById('vring').classList.add('on');document.getElementById('waves').classList.add('on');
-  document.getElementById('vlbl').textContent='Höre zu…';
-  const vt=document.getElementById('vtxt');vt.style.display='block';vt.textContent='…';
-  recog.onresult=e=>{let txt='';for(let i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;vt.textContent=txt;if(e.results[e.results.length-1].isFinal){stopVoice();handleInput(txt);}};
-  recog.onerror=e=>{showToast('Fehler: '+e.error+' → Text nutzen');stopVoice();setInputTab('text');};
-  recog.onend=()=>stopVoice();recog.start();
-}
-function stopVoice(){
-  listening=false;if(recog){try{recog.stop();}catch(e){}}recog=null;
-  document.getElementById('vbtn').classList.remove('on');document.getElementById('vring').classList.remove('on');document.getElementById('waves').classList.remove('on');
-  document.getElementById('vlbl').textContent='Tippen zum Starten';
+function detectRecurrence(txt) {
+  var l = txt.toLowerCase();
+  if(/jährlich|jedes jahr|geburtstag|jahrestag/.test(l)) return 'yearly';
+  if(/wöchentlich|jede woche/.test(l)) return 'weekly';
+  if(/monatlich|jeden monat/.test(l)) return 'monthly';
+  return null;
 }
 
-// CLASSIFY & PROCESS
-// ─────────────────────────────────────────────
-// Design principle: classify by what people ACTUALLY say in daily life.
-// Examples used to build these rules:
-//
-// TODOS (one-time, concrete, soon):
-//   "Ich muss meine Schwester vom Fußball abholen"
-//   "Wäsche waschen nicht vergessen"
-//   "Kurz beim Supermarkt vorbeischauen"
-//   "Mama anrufen"
-//   "Arztrezept abholen"
-//   "Auto zur Werkstatt bringen"
-//   "Paket aufgeben"
-//   "Kühlschrank auffüllen"
-//
-// APPOINTMENTS (specific date/time, event):
-//   "Ich habe morgen einen Geschäftstermin mit Herrn Müller um 10 Uhr im Büro"
-//   "Am 3.7. um 15:30 Physiktest"
-//   "Nächsten Montag Zahnarzt um 14 Uhr"
-//   "Geburtstag meines Vaters am 15. August jährlich"
-//   "Freitag 18 Uhr Fußballtraining"
-//   "Konferenz am Dienstag 9 Uhr morgens in München"
-//   "Vorstellungsgespräch am 20. Juni 10 Uhr"
-//
-// GOALS (recurring habit, long-term improvement):
-//   "Ich möchte 10.000 Euro sparen"
-//   "5x die Woche trainieren"
-//   "Täglich 10 Minuten meditieren"
-//   "Ich will abnehmen"
-//   "Mehr Bücher lesen"
-//   "Jeden Morgen 20 Liegestütze"
-//
-// CHECK-OFF:
-//   "Ich habe heute trainiert"
-//   "Wäsche ist fertig"
-//   "500 Euro gespart diese Woche"
-
-let convState=null,pTitle='',pArea='',pendingAptTitle='',pendingAptDt=null;
-
-// ── STRONG APPOINTMENT SIGNALS ──────────────────
-const APT_STRONG = [
-  /termin/i,
-  /meeting/i,
-  /konferenz/i,
-  /besprechung/i,
-  /vorstellungsgespräch/i,
-  /bewerbungsgespräch/i,
-  /prüfung/i,
-  /klausur/i,
-  /test\b/i,
-  /zahnarzt/i,
-  /arzt/i,
-  /untersuchung/i,
-  /operation/i,
-  /flug/i,
-  /abflug/i,
-  /zug\b/i,
-  /bahnfahrt/i,
-  /geburtstag/i,
-  /jahrestag/i,
-  /jubiläum/i,
-  /hochzeit/i,
-  /feier/i,
-  /party/i,
-  /fußballtraining/i,
-  /training\b/i,
-  /kurs\b/i,
-  /workshop/i,
-  /seminar/i,
-  /veranstaltung/i,
-  /geschäftstermin/i,
-  /kundengespräch/i,
-  /urlaub/i,
-  /reise/i,
-  /ausflug/i,
-  /trip/i,
-  /wochenende/i,
-  /kurzurlaub/i,
-  /familienfeier/i,
-  /hochzeitsfeier/i,
-];
-
-// ── STRONG TODO SIGNALS ──────────────────────────
-const TODO_STRONG = [
-  /^ich muss\b/i,
-  /^ich soll\b/i,
-  /nicht vergessen/i,
-  /vergiss nicht/i,
-  /noch (kurz |schnell )?/i,
-  /abholen/i,
-  /aufgeben/i,
-  /abgeben/i,
-  /einreichen/i,
-  /vorbeischauen/i,
-  /vorbeigehen/i,
-  /anrufen/i,
-  /zurückrufen/i,
-  /schreiben an/i,
-  /nachricht schicken/i,
-  /erledigen/i,
-  /kaufen/i,
-  /besorgen/i,
-  /holen/i,
-  /bringen/i,
-  /aufräumen/i,
-  /putzen/i,
-  /waschen/i,
-  /bezahlen/i,
-  /überweisen/i,
-  /buchen/i,
-  /reservieren/i,
-  /reparieren/i,
-  /ausfüllen/i,
-  /ausdrucken/i,
-];
-
-// ── STRONG GOAL SIGNALS ──────────────────────────
-const GOAL_STRONG = [
-  /ich (will|möchte|wünsche mir|strebe an|nehme mir vor)/i,
-  /mein ziel/i,
-  /täglich\b/i,
-  /jeden tag/i,
-  /jede woche/i,
-  /\d+\s*x\s*(die\s*)?(woche|tag|monat)/i,
-  /\d+\s*mal\s*(die\s*)?(woche|tag|monat)/i,
-  /pro woche/i,
-  /pro tag/i,
-  /regelmäßig/i,
-  /zur gewohnheit/i,
-  /langfristig/i,
-];
-
-// ── MONEY GOAL SIGNALS ───────────────────────────
-const MONEY_GOAL = [
-  /(\d[\d.,]*)\s*(euro|€|tausend euro|\d+k)/i,
-  /geld sparen/i,
-  /sparen/i,
-];
-
-// ── CHECK-OFF SIGNALS ────────────────────────────
-const CHECKOFF = [
-  /hab(e)?\s+.+\s+(gemacht|erledigt|fertig|gewaschen|trainiert|gelaufen|gespart|gelesen|gekauft|geputzt|gebucht|aufgeräumt|abgeholt|eingereicht|abgegeben)/i,
-  /bin\s+(gelaufen|gefahren|gewesen|gegangen)/i,
-  /.+\s+ist\s+(fertig|erledigt|gemacht|erledigt)/i,
-  /habe\s+heute\s+/i,
-];
-
-// ── MONEY UPDATE SIGNALS ─────────────────────────
-const MONEY_UPDATE = [
-  /(\d[\d.,]*)\s*(euro|€)\s*(gespart|zur seite|beiseite|eingespart|zurückgelegt)/i,
-  /(gespart|zur seite gelegt|beiseite gelegt)\s*[:,]?\s*(\d[\d.,]*)\s*(euro|€)/i,
-];
-
-// ── QUERY SIGNALS ────────────────────────────────
-const QUERY = [
-  /was steht (heute|an|auf)/i,
-  /was hab ich heute/i,
-  /was muss ich (heute|noch)/i,
-  /zeig mir (heute|alles|meine)/i,
-  /überblick/i,
-  /zusammenfassung/i,
-];
-
-function hasDate(txt) {
-  const l = txt.toLowerCase();
-  return (
-    /\d{1,2}[.\-\/]\d{1,2}/.test(txt) ||
-    /\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/.test(l) ||
-    /\b(morgen|übermorgen|heute abend|heute nachmittag)\b/.test(l) ||
-    /\b(januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember)\b/.test(l) ||
-    /\b(nächste[rn]?\s+(montag|dienstag|mittwoch|donnerstag|freitag|woche))\b/.test(l) ||
-    /\b(am\s+\d{1,2}\.)\b/.test(l) ||
-    /\b(dritten|vierten|fünften|sechsten|siebten|achten|neunten|zehnten|elften|zwölften|dreizehnten|vierzehnten|fünfzehnten|sechzehnten|siebzehnten|achtzehnten|neunzehnten|zwanzigsten|einundzwanzigsten|zweiundzwanzigsten|dreiundzwanzigsten|vierundzwanzigsten|fünfundzwanzigsten|sechsundzwanzigsten|siebenundzwanzigsten|achtundzwanzigsten|neunundzwanzigsten|dreißigsten|einunddreißigsten|ersten|zweiten)\b/.test(l)
-  );
-}
-
-function hasTime(txt) {
-  return /\d{1,2}[:.]\d{2}|\d{1,2}\s*uhr\b/.test(txt.toLowerCase());
-}
-
-function matchesAny(txt, patterns) {
-  return patterns.some(p => p.test(txt));
-}
-
-function classify(txt) {
-  const l = txt.toLowerCase();
-
-  // 1. Query
-  if (matchesAny(txt, QUERY)) { giveTodaySummary(); return; }
-
-  // 2. Check-off ("ich habe heute trainiert")
-  if (matchesAny(txt, CHECKOFF)) { checkOffByVoice(txt); return; }
-
-  // 3. Money update ("500 Euro gespart")
-  if (matchesAny(txt, MONEY_UPDATE)) { updateMoneyGoal(txt); return; }
-
-  // 4. Score-based classification
-  let aptScore = 0, todoScore = 0, goalScore = 0;
-
-  // Appointment scoring
-  APT_STRONG.forEach(p => { if (p.test(txt)) aptScore += 3; });
-  if (hasDate(txt)) aptScore += 2;
-  if (hasTime(txt)) aptScore += 2;
-  // "mit [Name]" at appointment context
-  if (/mit (herrn?|frau|dr\.?|prof\.?|[A-ZÄÖÜ][a-zäöü]+)/i.test(txt)) aptScore += 2;
-  // Ort/location clue
-  if (/\b(in|im|am|beim?|bei der)\s+[A-ZÄÖÜ]/i.test(txt)) aptScore += 1;
-
-  // Todo scoring
-  TODO_STRONG.forEach(p => { if (p.test(txt)) todoScore += 3; });
-  // Short concrete action verbs without date
-  if (!hasDate(txt) && !hasTime(txt)) todoScore += 1;
-  // "heute" without time = todo
-  if (/\bheute\b/i.test(l) && !hasTime(txt) && !matchesAny(txt, APT_STRONG)) todoScore += 2;
-
-  // Goal scoring
-  GOAL_STRONG.forEach(p => { if (p.test(txt)) goalScore += 3; });
-  MONEY_GOAL.forEach(p => { if (p.test(txt)) goalScore += 2; });
-  // "ich will/möchte X sparen/abnehmen/trainieren..." = strong goal
-  if (/ich (will|möchte)\s+\d/i.test(txt)) goalScore += 2;
-
-  // Disambiguation: if appointment keyword exists, it dominates
-  if (aptScore >= 3 && aptScore > todoScore && aptScore > goalScore) {
-    startAptConv(txt); return;
-  }
-  if (todoScore > goalScore && todoScore >= 3) {
-    processTodo(txt); return;
-  }
-  if (goalScore >= todoScore) {
-    startGoalConv(txt); return;
-  }
-
-  // Fallback: short with no date/time = todo, otherwise ask
-  if (!hasDate(txt) && !hasTime(txt) && txt.split(' ').length <= 8) {
-    processTodo(txt);
-  } else if (hasDate(txt) || hasTime(txt)) {
-    startAptConv(txt);
-  } else {
-    startGoalConv(txt);
-  }
-}
+// ═══════════════════════════════════════════════
+// AI / CLASSIFY
+// ═══════════════════════════════════════════════
+var convState = null, pTitle = '', pArea = '', pendingAptTitle = '', pendingAptDt = null, pendingAptEndDt = null;
 
 async function handleInput(txt) {
   showAI('user', txt);
   document.getElementById('aiArea').classList.add('show');
-  if (convState) { handleConvReply(txt); return; }
-  // Use Claude API for smart classification + response
-  await aiClassify(txt);
+  if(convState) { handleConvReply(txt); return; }
+  await aiProcess(txt);
 }
 
-async function aiClassify(txt) {
-  // Show typing indicator
-  aiTyping(async () => {
-    try {
-      const today = new Date().toLocaleDateString('de-DE', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
-      const todayIso = todayStr();
+async function aiProcess(txt) {
+  // Show typing
+  var msgs = document.getElementById('aiMsgs');
+  var typing = document.createElement('div');
+  typing.className = 'msg ai'; typing.id = 'typing_ind';
+  typing.innerHTML = '<div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>';
+  msgs.appendChild(typing); msgs.scrollTop = msgs.scrollHeight;
 
-      // Build context about existing data
-      const goalTitles = S.goals.filter(g=>!g.archived).map(g=>g.title).join(', ') || 'keine';
-      const todoTitles = S.todos.filter(t=>!t.done).map(t=>t.title).join(', ') || 'keine';
+  var today = new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  var goalTitles = S.goals.filter(function(g){return !g.archived;}).map(function(g){return g.title;}).join(', ') || 'keine';
+  var todoTitles = S.todos.filter(function(t){return !t.done;}).map(function(t){return t.title;}).join(', ') || 'keine';
 
-      const systemPrompt = `Du bist FlowMind, ein persönlicher Alltags-Assistent. Heute ist ${today}.
+  var systemPrompt = 'Du bist FlowMind, ein persönlicher Alltags-Assistent. Heute ist '+today+'.\n\nAktive Ziele: '+goalTitles+'\nOffene To-Dos: '+todoTitles+'\n\nAnalysiere die Eingabe und antworte NUR mit einem JSON-Objekt (kein Markdown, keine Backticks):\n{"type":"todo"|"goal"|"appointment"|"checkoff"|"money_update"|"query"|"chat","title":"bereinigter Titel","reply":"kurze Antwort auf Deutsch","date":"YYYY-MM-DD oder null","endDate":"YYYY-MM-DD oder null","time":"HH:MM oder null","person":"Name oder null","recurrence":"yearly"|"weekly"|"monthly"|null,"reps":Zahl|null,"isDaily":true|false,"isMoney":true|false,"targetAmount":Zahl|null,"amount":Zahl|null,"matchedTitle":"passendes Element zum Abhaken oder null"}\n\ntodo=einmalige Aufgabe(abholen,kaufen,anrufen,waschen)\ngoal=wiederkehrendes Ziel/Gewohnheit/Sparziel\nappointment=Termin mit Datum/Zeit(Urlaub,Meeting,Prüfung,Geburtstag,Reise)\ncheckoff=Nutzer meldet Erledigtes\nmoney_update=gesparte Euro\nquery=Frage nach heutigem Plan\nchat=alles andere';
 
-Der Nutzer hat folgende aktive Ziele: ${goalTitles}
-Offene To-Dos heute: ${todoTitles}
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 400,
+        system: systemPrompt,
+        messages: [{role:'user',content:txt}]
+      })
+    });
+    var data = await resp.json();
+    var raw = (data.content && data.content[0] && data.content[0].text) || '{}';
+    var parsed;
+    try { parsed = JSON.parse(raw.replace(/```json|```/g,'').trim()); }
+    catch(e) { parsed = null; }
 
-Deine Aufgabe: Analysiere die Eingabe des Nutzers und antworte NUR mit einem JSON-Objekt ohne Markdown, ohne Backticks, ohne Erklärung.
+    var ind = document.getElementById('typing_ind');
+    if(ind) ind.remove();
 
-JSON-Format:
-{
-  "type": "todo" | "goal" | "appointment" | "checkoff" | "money_update" | "query" | "conversation",
-  "title": "bereinigter Titel",
-  "reply": "kurze freundliche Antwort auf Deutsch (max 2 Sätze)",
-  "date": "YYYY-MM-DD oder null",
-  "endDate": "YYYY-MM-DD oder null (für mehrtägige Termine)",
-  "time": "HH:MM oder null",
-  "person": "Name oder null",
-  "recurrence": "yearly" | "weekly" | "monthly" | null,
-  "reps": Zahl oder null (wie oft pro Woche bei Zielen),
-  "isDaily": true | false,
-  "isMoney": true | false,
-  "targetAmount": Zahl oder null,
-  "amount": Zahl oder null (bei money_update: gespartet Betrag),
-  "matchedTitle": "passendes Ziel/Todo zum Abhaken oder null"
+    if(!parsed) { classifyFallback(txt); return; }
+    if(parsed.reply) showAI('ai', parsed.reply);
+    executeAction(parsed, txt);
+
+  } catch(err) {
+    var ind2 = document.getElementById('typing_ind');
+    if(ind2) ind2.remove();
+    classifyFallback(txt);
+  }
 }
 
-Regeln:
-- "todo": einmalige Aufgabe (abholen, kaufen, anrufen, waschen, etc.)
-- "goal": wiederkehrendes Ziel / Gewohnheit / Sparziel
-- "appointment": Termin mit Datum UND/ODER Uhrzeit (Urlaub, Meeting, Prüfung, Geburtstag, etc.)
-- "checkoff": Nutzer sagt er hat etwas erledigt ("ich habe trainiert", "wäsche ist fertig")
-- "money_update": Nutzer meldet gesparte Euro
-- "query": Nutzer fragt was heute ansteht
-- "conversation": allgemeine Frage/Aussage
-
-Wenn type=appointment und kein Datum erkannt: date=null (wird nachgefragt).
-Antworte IMMER auf Deutsch. Sei kurz und motivierend.`;
-
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 400,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: txt }]
-        })
-      });
-
-      const data = await response.json();
-      const raw = data.content?.[0]?.text || '{}';
-
-      let parsed;
-      try {
-        const clean = raw.replace(/```json|```/g, '').trim();
-        parsed = JSON.parse(clean);
-      } catch(e) {
-        // Fallback to rule-based if JSON parse fails
-        classify(txt);
-        return;
+function executeAction(p, originalTxt) {
+  switch(p.type) {
+    case 'todo':
+      S.todos.unshift({id:uid(),title:p.title||originalTxt,done:false,time:p.time||'',createdDate:todayStr(),recurring:p.isDaily||false,created:Date.now()});
+      save(); renderOverview(); showToast('✅ To-Do gespeichert');
+      break;
+    case 'goal':
+      if(p.isMoney && p.targetAmount) {
+        createGoalDirect(p.title||originalTxt, true, p.targetAmount, false, 0);
+      } else {
+        var reps2 = p.isDaily ? 7 : (p.reps||5);
+        createGoalDirect(p.title||originalTxt, false, 0, p.isDaily||false, reps2);
       }
-
-      // Show AI reply
-      if (parsed.reply) showAI('ai', parsed.reply);
-
-      // Execute the action
-      switch(parsed.type) {
-        case 'todo':
-          S.todos.unshift({
-            id: uid(),
-            title: parsed.title || txt,
-            done: false,
-            time: parsed.time || '',
-            createdDate: todayStr(),
-            recurring: parsed.recurrence === 'daily' || parsed.isDaily,
-            created: Date.now()
-          });
+      break;
+    case 'appointment':
+      var dt = null;
+      if(p.date) {
+        var parts = p.date.split('-').map(Number);
+        var tparts = p.time ? p.time.split(':').map(Number) : [9,0];
+        dt = new Date(parts[0], parts[1]-1, parts[2], tparts[0], tparts[1], 0, 0);
+      }
+      var endDt = null;
+      if(p.endDate) {
+        var eparts = p.endDate.split('-').map(Number);
+        endDt = new Date(eparts[0], eparts[1]-1, eparts[2], 23, 59, 0, 0);
+      }
+      if(dt) {
+        saveApt(p.title||originalTxt, dt, false, endDt);
+      } else {
+        pendingAptTitle = p.title || originalTxt;
+        pendingAptDt = null; pendingAptEndDt = null;
+        convState = 'apt_time';
+      }
+      break;
+    case 'checkoff':
+      checkOffByVoice(p.matchedTitle || originalTxt);
+      break;
+    case 'money_update':
+      if(p.amount) {
+        var mg = S.goals.filter(function(g){ return g.isMoney && !g.archived; });
+        if(mg.length > 0) {
+          mg[0].savedAmount = (mg[0].savedAmount||0) + p.amount;
+          var pct2 = mg[0].targetAmount>0 ? Math.round(mg[0].savedAmount/mg[0].targetAmount*100) : 0;
           save(); renderOverview();
-          showToast('✅ To-Do gespeichert');
-          break;
-
-        case 'goal':
-          if (parsed.isMoney && parsed.targetAmount) {
-            createGoal(parsed.title || txt, true, parsed.targetAmount, false, 0);
-          } else {
-            const reps = parsed.isDaily ? 7 : (parsed.reps || 5);
-            createGoalDirect(parsed.title || txt, false, 0, parsed.isDaily || false, reps);
-          }
-          break;
-
-        case 'appointment': {
-          let dt = null;
-          if (parsed.date) {
-            const [y,m,d] = parsed.date.split('-').map(Number);
-            const [h,min] = parsed.time ? parsed.time.split(':').map(Number) : [9,0];
-            dt = new Date(y, m-1, d, h, min, 0, 0);
-          }
-          let endDt = null;
-          if (parsed.endDate) {
-            const [ey,em,ed] = parsed.endDate.split('-').map(Number);
-            endDt = new Date(ey, em-1, ed, 23, 59, 0, 0);
-          }
-          if (dt) {
-            saveApt(parsed.title || txt, dt, false, endDt);
-          } else {
-            // Need date - ask
-            pendingAptTitle = parsed.title || txt;
-            pendingAptEndDt = null;
-            convState = 'apt_time';
-          }
-          break;
+          showAI('ok', '💰 +'+p.amount+' € gespart!\nGesamt: '+fmt(mg[0].savedAmount)+' € / '+fmt(mg[0].targetAmount)+' € ('+pct2+'%)'+(pct2>=100?'\n\n🎉 ZIEL ERREICHT!':''));
         }
-
-        case 'checkoff':
-          checkOffByVoice(parsed.matchedTitle || txt);
-          break;
-
-        case 'money_update':
-          if (parsed.amount) {
-            const mg = S.goals.filter(g=>g.isMoney&&!g.archived);
-            if (mg.length > 0) {
-              mg[0].savedAmount = (mg[0].savedAmount || 0) + parsed.amount;
-              save(); renderOverview();
-            }
-          }
-          break;
-
-        case 'query':
-          giveTodaySummary();
-          break;
-
-        case 'conversation':
-          // Reply already shown above
-          break;
-
-        default:
-          classify(txt); // fallback
       }
-
-    } catch(err) {
-      console.error('AI error:', err);
-      // Fallback to rule-based classify
-      classify(txt);
-    }
-  });
-}
-
-function createGoalDirect(title, isMoney, targetAmount, isDaily, reps) {
-  const r = isDaily ? 7 : (reps || 5);
-  S.goals.push({
-    id: uid(), title, category: guessCat(title),
-    emoji: guessEmoji(title, isMoney), reps: r,
-    weekChecks: 0, lastWeekKey: getWeekKey(),
-    archived: false, isMoney, isDaily: !!isDaily,
-    targetAmount: targetAmount || 0, savedAmount: 0,
-    created: Date.now()
-  });
-  pTitle=''; pArea=''; save();
-  const tips = getTips(title);
-  showToast('🎯 Ziel erstellt');
-  renderOverview();
-}
-
-function giveTodaySummary(){
-  const today=todayStr();
-  const apts=S.apts.filter(a=>a.datetime.startsWith(today)).sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
-  const todos=S.todos.filter(t=>!t.done);
-  let msg='📋 Heute:\n\n';
-  if(apts.length>0){msg+='📅 Termine:\n';apts.forEach(a=>{const d=new Date(a.datetime);msg+='· '+pad(d.getHours())+':'+pad(d.getMinutes())+' – '+a.title+(a.person?' ('+a.person+')':'')+'\n';});}
-  if(todos.length>0){msg+='\n✅ To-Dos:\n';todos.forEach(t=>{msg+='· '+t.title+(t.time?' um '+t.time:'')+'\n';});}
-  if(apts.length===0&&todos.length===0)msg='Alles erledigt! 🎉';
-  aiTyping(()=>showAI('ai',msg));
-}
-
-function checkOffByVoice(txt){
-  const l=txt.toLowerCase();let matched=[];
-  S.todos.forEach(t=>{if(!t.done){const w=t.title.toLowerCase().split(' ');const mc=w.filter(x=>x.length>3&&l.includes(x)).length;if(mc>=1&&mc/w.length>0.35){t.done=true;matched.push(t.title);}}});
-  S.goals.forEach((g,gi)=>{if(g.archived)return;const w=(g.title||'').toLowerCase().split(' ');const mc=w.filter(x=>x.length>3&&l.includes(x)).length;const r=g.isDaily?7:g.reps||0;if(mc>=1&&mc/w.length>0.3&&r>0){const d=g.weekChecks||0;if(d<r){g.weekChecks=d+1;matched.push(g.title+' ('+g.weekChecks+'/'+r+')');}}}); 
-  if(matched.length>0){save();renderOverview();aiTyping(()=>showAI('ok','✅ Abgehakt:\n'+matched.map(m=>'· '+m).join('\n')));}
-  else aiTyping(()=>showAI('ai','Kein passendes Element gefunden.\nBeispiel: "Ich habe heute trainiert"'));
-}
-
-function updateMoneyGoal(txt){
-  // Extract amount from text
-  const patterns = [
-    /(\d[\d.,]*)\s*(euro|€)/i,
-    /(euro|€)\s*(\d[\d.,]*)/i,
-  ];
-  let amount = null;
-  for (const p of patterns) {
-    const m = txt.match(p);
-    if (m) { amount = parseFloat((m[1]||m[2]).replace(/\./g,'').replace(',','.')); break; }
+      break;
+    case 'query':
+      giveTodaySummary(); break;
+    default: break;
   }
-  if (!amount) { aiTyping(()=>showAI('ai','Wie viel Euro hast du gespart?')); return; }
-  const mg=S.goals.filter(g=>g.isMoney&&!g.archived);
-  if(mg.length===0){aiTyping(()=>showAI('ai','Kein Sparziel gefunden. Erstelle zuerst eines.'));return;}
-  const g=mg[0];g.savedAmount=(g.savedAmount||0)+amount;
-  const pct=g.targetAmount>0?Math.round(g.savedAmount/g.targetAmount*100):0;
-  const reached=g.targetAmount>0&&g.savedAmount>=g.targetAmount;
-  save();renderOverview();
-  aiTyping(()=>showAI('ok','💰 +'+amount+' € gespart!\nGesamt: '+fmt(g.savedAmount)+' € / '+fmt(g.targetAmount)+' € ('+pct+'%)'+(reached?'\n\n🎉 ZIEL ERREICHT!':'')));
 }
 
-function processTodo(txt){
-  const clean=txt
-    .replace(/^(ich muss|ich soll|bitte|ich|nicht vergessen:?|vergiss nicht:?)\s+/i,'')
-    .replace(/\s+(heute|morgen)$/i,'').trim();
-  const tm=txt.match(/um\s*(\d{1,2})[:\.](\d{2})/i)||txt.match(/(\d{1,2})\s*uhr/i);
-  const time=tm?pad(+tm[1])+':'+(tm[2]?pad(+tm[2]):'00'):'';
-  const recurring=/täglich|jeden tag|immer wieder/.test(txt.toLowerCase());
-  S.todos.unshift({id:uid(),title:clean||txt,done:false,time,createdDate:todayStr(),recurring,created:Date.now()});
-  save();
-  aiTyping(()=>showAI('ok','✅ To-Do gespeichert:\n"'+(clean||txt)+'"'+(time?' um '+time:'')+(recurring?' 🔁':'')));
-  showToast('✅ To-Do gespeichert');renderOverview();
+// Fallback rule-based classifier
+function classifyFallback(txt) {
+  var l = txt.toLowerCase();
+  if(/was steht|was hab ich|was muss ich heute|überblick/.test(l)) { giveTodaySummary(); return; }
+  if(/hab(e)?\s+.+\s+(gemacht|erledigt|fertig|gewaschen|trainiert|gelaufen|gespart)/i.test(txt)) { checkOffByVoice(txt); return; }
+  var hasDate = /\d{1,2}[.\-\/]\d{1,2}|\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|morgen|übermorgen)\b/.test(l);
+  var hasTime = /\d{1,2}[:.]\d{2}|\d{1,2}\s*uhr\b/.test(l);
+  var aptKw = /termin|meeting|prüfung|zahnarzt|arzt|geburtstag|urlaub|reise|flug|training|kurs/.test(l);
+  var todoKw = /muss|soll|abholen|kaufen|anrufen|waschen|aufräumen|bringen|holen|besorgen|erledigen/.test(l);
+  var goalKw = /ich will|ich möchte|täglich|jede woche|mal die woche|sparen|ziel/.test(l);
+  if((hasDate && (hasTime||aptKw)) || aptKw) { startAptConvFallback(txt); return; }
+  if(todoKw && !goalKw) { processTodoFallback(txt); return; }
+  startGoalConvFallback(txt);
 }
 
-let pendingAptEndDt=null;
-function startAptConv(txt){
-  pendingAptTitle=txt;pendingAptEndDt=null;
-  const dt=parseDatetime(txt);
-  const endDt=parseEndDate(txt);
-  if(dt){
-    pendingAptDt=dt;
-    if(endDt){pendingAptEndDt=endDt;}
-    convState='apt_reminder';
-    const ds=dt.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    const endStr=endDt?' bis '+endDt.toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'}):'';
-    aiTyping(()=>showAI('ai','📅 Termin erkannt:\n'+ds+(endStr?'\n'+endStr:' um '+pad(dt.getHours())+':'+pad(dt.getMinutes()))+'\n\nErinnerung? (ja/nein)'));
+function giveTodaySummary() {
+  var today = todayStr();
+  var apts = S.apts.filter(function(a){ return a.datetime.startsWith(today); }).sort(function(a,b){ return new Date(a.datetime)-new Date(b.datetime); });
+  var todos = S.todos.filter(function(t){ return !t.done; });
+  var msg = '📋 Heute:\n\n';
+  if(apts.length>0){ msg+='📅 Termine:\n'; apts.forEach(function(a){ var d=new Date(a.datetime); msg+='· '+pad(d.getHours())+':'+pad(d.getMinutes())+' – '+a.title+(a.person?' ('+a.person+')':'')+'\n'; }); }
+  if(todos.length>0){ msg+='\n✅ To-Dos:\n'; todos.forEach(function(t){ msg+='· '+t.title+(t.time?' um '+t.time:'')+'\n'; }); }
+  if(apts.length===0 && todos.length===0) msg='Alles erledigt! 🎉';
+  showAI('ai', msg);
+}
+
+function checkOffByVoice(txt) {
+  var l = txt.toLowerCase(), matched = [];
+  S.todos.forEach(function(t){
+    if(!t.done){ var w=t.title.toLowerCase().split(' '); var mc=w.filter(function(x){ return x.length>3&&l.includes(x); }).length; if(mc>=1&&mc/w.length>0.35){ t.done=true; matched.push(t.title); } }
+  });
+  S.goals.forEach(function(g) {
+    if(g.archived) return;
+    var w=(g.title||'').toLowerCase().split(' ');
+    var mc=w.filter(function(x){ return x.length>3&&l.includes(x); }).length;
+    var r=g.isDaily?7:(g.reps||0);
+    if(mc>=1&&mc/w.length>0.3&&r>0){ var d=g.weekChecks||0; if(d<r){ g.weekChecks=d+1; matched.push(g.title+' ('+g.weekChecks+'/'+r+')'); } }
+  });
+  if(matched.length>0){ save(); renderOverview(); showAI('ok','✅ Abgehakt:\n'+matched.map(function(m){ return '· '+m; }).join('\n')); }
+  else showAI('ai','Kein passendes Element gefunden.');
+}
+
+function processTodoFallback(txt) {
+  var clean = txt.replace(/^(ich muss|ich soll|bitte|ich)\s+/i,'').replace(/\s+(heute|morgen)$/i,'').trim();
+  var tm = txt.match(/um\s*(\d{1,2})[:\.](\d{2})/i) || txt.match(/(\d{1,2})\s*uhr/i);
+  var time = tm ? pad(+tm[1])+':'+(tm[2]?pad(+tm[2]):'00') : '';
+  S.todos.unshift({id:uid(),title:clean||txt,done:false,time:time,createdDate:todayStr(),recurring:false,created:Date.now()});
+  save(); showAI('ok','✅ To-Do: "'+(clean||txt)+'"'); showToast('✅ To-Do gespeichert'); renderOverview();
+}
+
+function startAptConvFallback(txt) {
+  pendingAptTitle = txt; pendingAptEndDt = null;
+  var dt = parseDatetime(txt);
+  var endDt = parseEndDate(txt);
+  if(dt) {
+    pendingAptDt = dt;
+    if(endDt) pendingAptEndDt = endDt;
+    convState = 'apt_reminder';
+    var ds = dt.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    var endStr = endDt ? ' bis '+endDt.toLocaleDateString('de-DE',{day:'numeric',month:'long'}) : '';
+    showAI('ai','📅 Termin erkannt:\n'+ds+(endStr||(' um '+pad(dt.getHours())+':'+pad(dt.getMinutes())))+'\n\nErinnerung? (ja/nein)');
   } else {
-    convState='apt_time';
-    aiTyping(()=>showAI('ai','Wann genau?\n(z.B. "morgen um 14 Uhr", "3.7. bis 10.7. Urlaub")'));
+    convState = 'apt_time';
+    showAI('ai','Wann genau?\n(z.B. "3.7.2026 um 15:30 Uhr")');
   }
 }
 
-// Parse end date for multi-day events
-function parseEndDate(txt){
-  // Patterns: "bis 10.7.", "bis 15. Juli", "bis 10.7.2026", "– 20.8."
-  const bisDot=txt.match(/bis\s+(\d{1,2})[.\-](\d{1,2})(?:[.\-](\d{2,4}))?/i);
-  if(bisDot){
-    const day=parseInt(bisDot[1]),month=parseInt(bisDot[2]);
-    let year=bisDot[3]?parseInt(bisDot[3]):new Date().getFullYear();
-    if(year<100)year+=2000;
-    return new Date(year,month-1,day,23,59,0,0);
+function startGoalConvFallback(txt) {
+  pTitle = txt; pArea = '';
+  var l = txt.toLowerCase();
+  var moneyMatch = txt.match(/(\d[\d.,]*)\s*(euro|€|tausend\s*euro)/i) || txt.match(/(\d+)\s*k\s*(euro|€)?/i);
+  var isMoney = !!moneyMatch || /\bgeld\b|\bsparen\b/.test(l);
+  if(isMoney && moneyMatch) {
+    var raw = moneyMatch[1].replace(/\./g,'').replace(',','.');
+    if(/tausend/i.test(moneyMatch[0]) || /k\s*(euro|€)?$/i.test(moneyMatch[0])) raw = String(parseFloat(raw)*1000);
+    createGoalDirect(txt, true, parseFloat(raw), false, 0); return;
   }
-  const bisOrd=txt.match(/bis\s+([\w]+)\s+(\w+)/i);
-  if(bisOrd){
-    const ord=ORDINALS_DE[bisOrd[1].toLowerCase()];
-    const mon=MONTHS_DE_MAP[bisOrd[2].toLowerCase()];
-    if(ord&&mon)return new Date(new Date().getFullYear(),mon-1,ord,23,59,0,0);
-  }
-  return null;
+  var isDaily = /täglich|jeden tag/.test(l);
+  var rm = txt.match(/(\d+)\s*x?\s*(mal\s+)?(die\s+)?(woche|tag)/i);
+  if(rm || isDaily) { createGoalDirect(txt, false, 0, isDaily, rm?+rm[1]:(isDaily?7:5)); return; }
+  convState = 'goal_measure';
+  showAI('ai','Wie oft pro Woche?\n· "5x die Woche"\n· "täglich"\n· "kein festes Intervall"');
 }
 
-function saveApt(title,dt,reminder,endDt){
-  const pm=title.match(/mit\s+(herrn?|frau|dr\.?|prof\.?)?\s*([A-ZÄÖÜa-zäöüß]+)/i);
-  const person=pm?pm[2]:'';
-  const recurrence=detectRecurrence(title);
-  // Clean title: remove date/time/person noise
-  const clean=title
-    .replace(/^(termin|ich habe einen?|ich hab einen?|es gibt einen?)\s+/i,'')
+function handleConvReply(txt) {
+  var l = txt.toLowerCase();
+  var isDaily = /täglich|jeden tag/.test(l);
+  var rm = txt.match(/(\d+)\s*x?\s*(mal\s+)?(die\s+)?(woche|tag)/i);
+  var noReps = /kein|ohne|langzeit|offen/.test(l);
+  if(convState==='goal_area'){ pArea=txt; convState='goal_measure'; showAI('ai','Wie oft?\n· "5x die Woche"\n· "täglich"\n· "kein festes Intervall"'); }
+  else if(convState==='goal_measure'){ convState=null; createGoalDirect(pTitle+(pArea?' ('+pArea+')':''), false, 0, isDaily, isDaily?7:rm?+rm[1]:noReps?0:5); }
+  else if(convState==='goal_money'){ var mm=txt.match(/(\d[\d.,]*)/); convState=null; createGoalDirect(pTitle, true, mm?parseFloat(mm[1].replace(',','.')):0, false, 0); }
+  else if(convState==='apt_time'){
+    var dt2=parseDatetime(txt);
+    if(dt2){ pendingAptDt=dt2; convState='apt_reminder'; var ds2=dt2.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short',year:'numeric'}); showAI('ai',ds2+' '+pad(dt2.getHours())+':'+pad(dt2.getMinutes())+'\n\nErinnerung? (ja/nein)'); }
+    else showAI('ai','Format: "3.7.2026 um 15:30 Uhr"');
+  }
+  else if(convState==='apt_reminder'){ convState=null; saveApt(pendingAptTitle, pendingAptDt||new Date(), /ja|bitte|gerne|klar/.test(l), pendingAptEndDt); }
+}
+
+function saveApt(title, dt, reminder, endDt) {
+  var pm = title.match(/mit\s+(herrn?|frau|dr\.?)?\s*([A-ZÄÖÜa-zäöüß]+)/i);
+  var person = pm ? pm[2] : '';
+  var recurrence = detectRecurrence(title);
+  var clean = title.replace(/^(termin|ich habe einen?|ich hab einen?)\s+/i,'')
     .replace(/\d{1,2}[.\-\/]\d{1,2}([.\-\/]\d{2,4})?/g,'')
     .replace(/\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|morgen|übermorgen)\b/gi,'')
     .replace(/um\s*\d{1,2}[:\.\s]*\d{0,2}\s*uhr|\d{1,2}[:.]\d{2}\s*uhr?/gi,'')
     .replace(/\d{1,2}\s*uhr/gi,'')
-    .replace(/mit\s+(herrn?|frau|dr\.?|prof\.?)?\s*[A-Za-zäöüÄÖÜß]+/gi,'')
-    .replace(/jährlich|jedes jahr|wöchentlich|jede woche|monatlich/gi,'')
-    .replace(/\s+(in|im|am|beim?|bei der)\s+\S+/gi,' ')
+    .replace(/mit\s+(herrn?|frau|dr\.?)?\s*[A-Za-zäöüÄÖÜß]+/gi,'')
+    .replace(/jährlich|jedes jahr|wöchentlich|jede woche|monatlich|bis\s+\d{1,2}[.\-]\d{1,2}/gi,'')
     .replace(/\s+/g,' ').trim();
-  S.apts.push({id:uid(),title:clean||title,datetime:dt.toISOString(),endDatetime:endDt?endDt.toISOString():null,person,reminder:!!reminder,recurrence,created:Date.now()});
+  S.apts.push({id:uid(),title:clean||title,datetime:dt.toISOString(),endDatetime:endDt?endDt.toISOString():null,person:person,reminder:!!reminder,recurrence:recurrence,created:Date.now()});
   save();
-  const rl=recurrence==='yearly'?' 🔁 Jährlich':recurrence==='weekly'?' 🔁 Wöchentlich':recurrence==='monthly'?' 🔁 Monatlich':'';
-  const ds=dt.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  aiTyping(()=>showAI('ok','📅 Termin gespeichert:\n"'+(clean||title)+'"\n'+ds+' '+pad(dt.getHours())+':'+pad(dt.getMinutes())+(person?' 👤 '+person:'')+(reminder?' 🔔':'')+(rl)));
-  showToast('📅 Termin gespeichert');renderOverview();
+  var rl = recurrence==='yearly'?' 🔁 Jährlich':recurrence==='weekly'?' 🔁 Wöchentlich':recurrence==='monthly'?' 🔁 Monatlich':'';
+  var ds3 = dt.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  var endStr2 = endDt ? ' bis '+endDt.toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'}) : '';
+  showAI('ok','📅 Gespeichert:\n"'+(clean||title)+'"\n'+ds3+' '+pad(dt.getHours())+':'+pad(dt.getMinutes())+endStr2+(person?' 👤 '+person:'')+(reminder?' 🔔':'')+rl);
+  showToast('📅 Termin gespeichert'); renderOverview();
 }
 
-// GOAL CONVERSATION
-function startGoalConv(txt){
-  pTitle=txt;pArea='';
-  const l=txt.toLowerCase();
-
-  // Extract money amount directly from input - no need to ask again
-  const moneyMatch = txt.match(/(\d[\d.,]*)\s*(euro|€|tausend\s*euro)/i) ||
-                     txt.match(/(\d+)\s*k\s*(euro|€)?/i);
-  const isMoney = !!moneyMatch || /\bgeld\b|\bsparen\b/.test(l);
-  
-  if(isMoney && moneyMatch){
-    // Amount already given - create directly
-    let raw = moneyMatch[1].replace(/\./g,'').replace(',','.');
-    // Handle "10 Tausend" or "10k"
-    if(/tausend/i.test(moneyMatch[0])||/k\s*(euro|€)?$/i.test(moneyMatch[0])) raw = String(parseFloat(raw)*1000);
-    const target = parseFloat(raw);
-    convState=null;
-    createGoal(txt, true, target, false, 0);
-    return;
-  }
-  if(isMoney && !moneyMatch){
-    convState='goal_money';
-    aiTyping(()=>showAI('ai','Sparziel! Wie viel Euro möchtest du sparen?'));
-    return;
-  }
-
-  const isDaily=/täglich|jeden tag|jeden morgen|jeden abend/.test(l);
-  const repsMatch=txt.match(/(\d+)\s*x?\s*(mal\s+)?(die\s+)?(woche|tag|pro\s*(woche|tag))/i);
-  const hasReps=!!repsMatch||isDaily;
-  const vague=/disziplin|besser\s+werden|mehr\s+fokus|gesünder|fitter|abnehmen|zunehmen/.test(l)&&!hasReps;
-
-  if(vague){convState='goal_area';aiTyping(()=>showAI('ai','Klingt gut! In welchem Bereich?\n(z.B. Sport, Ernährung, Lernen, Arbeit)'));}
-  else if(!hasReps){
-    convState='goal_measure';
-    aiTyping(()=>showAI('ai','Wie oft pro Woche?\n· "5x die Woche"\n· "täglich"\n· "1x pro Woche"\n· "kein festes Intervall"'));
-  }
-  else createGoal(txt,false,0,isDaily,repsMatch?parseInt(repsMatch[1]):(isDaily?7:1));
+function createGoalDirect(title, isMoney, targetAmount, isDaily, reps) {
+  convState = null;
+  var r = isDaily ? 7 : (reps !== undefined ? reps : 5);
+  S.goals.push({id:uid(),title:title,category:pArea||guessCat(title),emoji:guessEmoji(title,isMoney),reps:r,weekChecks:0,lastWeekKey:getWeekKey(),archived:false,isMoney:isMoney,isDaily:!!isDaily,targetAmount:targetAmount||0,savedAmount:0,created:Date.now()});
+  pTitle=''; pArea=''; save();
+  var tips3 = getTips(title);
+  var badge3 = isMoney ? '💰 Sparziel: '+fmt(targetAmount||0)+' €' : isDaily ? '🔁 Täglich' : r>0 ? '🔄 '+r+'× pro Woche' : '📌 Langzeitziel';
+  showAI('ok','🎯 Ziel erstellt!\n'+badge3+'\n\n💡 '+tips3[0].text);
+  showToast('🎯 Ziel erstellt'); renderOverview();
 }
 
-function handleConvReply(txt){
-  const l=txt.toLowerCase();
-  const isDaily=/täglich|jeden tag/.test(l);
-  const rm=txt.match(/(\d+)\s*x?\s*(mal\s+)?(die\s+)?(woche|tag|pro\s*(woche|tag))/i);
-  const noReps=/kein|ohne|langzeit|offen|open/.test(l);
-
-  if(convState==='goal_area'){pArea=txt;convState='goal_measure';aiTyping(()=>showAI('ai','Wie oft?\n· "5x die Woche"\n· "täglich"\n· "kein festes Intervall"'));}
-  else if(convState==='goal_measure'){
-    convState=null;
-    const reps=isDaily?7:rm?parseInt(rm[1]):noReps?0:1;
-    createGoal(pTitle+(pArea?' ('+pArea+')':''),false,0,isDaily,reps);
-  }
-  else if(convState==='goal_money'){
-    const moneyMatch=txt.match(/(\d[\d.,]*)\s*(euro|€|tausend|k)?/i);
-    let target=0;
-    if(moneyMatch){
-      let raw=moneyMatch[1].replace(/\./g,'').replace(',','.');
-      if(/tausend/i.test(txt)||/\bk\b/i.test(txt))raw=String(parseFloat(raw)*1000);
-      target=parseFloat(raw);
-    }
-    convState=null;
-    createGoal(pTitle,true,target,false,0);
-  }
-  else if(convState==='apt_time'){
-    const dt=parseDatetime(txt);
-    if(dt){pendingAptDt=dt;convState='apt_reminder';const ds=dt.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short',year:'numeric'});aiTyping(()=>showAI('ai',ds+' '+pad(dt.getHours())+':'+pad(dt.getMinutes())+'\n\nErinnerung? (ja/nein)'));}
-    else{aiTyping(()=>showAI('ai','Bitte Format: "3.7.2026 um 15:30 Uhr"'));}
-  }
-  else if(convState==='apt_reminder'){convState=null;saveApt(pendingAptTitle,pendingAptDt||new Date(),/ja|bitte|gerne|klar|yes/.test(l),pendingAptEndDt);}
+// ═══════════════════════════════════════════════
+// AI UI
+// ═══════════════════════════════════════════════
+function showAI(role, txt) {
+  var msgs = document.getElementById('aiMsgs');
+  var d = document.createElement('div');
+  d.className = 'msg '+role;
+  d.textContent = txt;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
-function createGoal(title,isMoney,targetAmount,isDaily,reps){
-  convState=null;
-  const r=isDaily?7:(reps!==undefined?reps:5);
-  S.goals.push({id:uid(),title,category:pArea||guessCat(title),emoji:guessEmoji(title,isMoney),reps:r,weekChecks:0,lastWeekKey:getWeekKey(),archived:false,isMoney,isDaily:!!isDaily,targetAmount:targetAmount||0,savedAmount:0,created:Date.now()});
-  pTitle='';pArea='';save();
-  const tips=getTips(title);
-  const badge=isMoney?'💰 Sparziel: '+fmt(targetAmount||0)+' €':isDaily?'🔁 Täglich':r>0?'🔄 '+r+'× pro Woche':'📌 Langzeitziel';
-  aiTyping(()=>showAI('ok','🎯 Ziel erstellt!\n'+badge+'\n\n💡 '+tips[0].text));
-  showToast('🎯 Ziel erstellt');renderOverview();
-}
-
-
-
-
+// ═══════════════════════════════════════════════
 // CALENDAR
-// DATE PARSER
-const ORDINALS_DE={ersten:1,zweiten:2,dritten:3,vierten:4,fünften:5,sechsten:6,siebten:7,achten:8,neunten:9,zehnten:10,elften:11,zwölften:12,dreizehnten:13,vierzehnten:14,fünfzehnten:15,sechzehnten:16,siebzehnten:17,achtzehnten:18,neunzehnten:19,zwanzigsten:20,einundzwanzigsten:21,zweiundzwanzigsten:22,dreiundzwanzigsten:23,vierundzwanzigsten:24,fünfundzwanzigsten:25,sechsundzwanzigsten:26,siebenundzwanzigsten:27,achtundzwanzigsten:28,neunundzwanzigsten:29,dreißigsten:30,einunddreißigsten:31};
-const MONTHS_DE_MAP={januar:1,februar:2,märz:3,april:4,mai:5,juni:6,juli:7,august:8,september:9,oktober:10,november:11,dezember:12};
-function parseDatetime(txt){
-  const now=new Date();
-  let day=null,month=null,year=null,hour=null,minute=0;
-  const numDate=txt.match(/(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})/);
-  if(numDate){day=parseInt(numDate[1]);month=parseInt(numDate[2]);year=parseInt(numDate[3]);if(year<100)year+=2000;}
-  if(!day){const ordKeys=Object.keys(ORDINALS_DE).join('|');const re=new RegExp('('+ordKeys+')\\s+(\\d{1,2})\\.?','i');const m=txt.match(re);if(m){day=ORDINALS_DE[m[1].toLowerCase()];month=parseInt(m[2]);}}
-  if(!day){const ordKeys=Object.keys(ORDINALS_DE).join('|');const monKeys=Object.keys(MONTHS_DE_MAP).join('|');const re=new RegExp('('+ordKeys+')\\s+('+monKeys+')','i');const m=txt.match(re);if(m){day=ORDINALS_DE[m[1].toLowerCase()];month=MONTHS_DE_MAP[m[2].toLowerCase()];}}
-  if(!day){const re=/(\d{1,2})\.\s*(\d{1,2})\./;const m=txt.match(re);if(m){day=parseInt(m[1]);month=parseInt(m[2]);}}
-  if(!day){
-    if(/übermorgen/i.test(txt)){const d=new Date(now);d.setDate(d.getDate()+2);day=d.getDate();month=d.getMonth()+1;year=d.getFullYear();}
-    else if(/morgen/i.test(txt)){const d=new Date(now);d.setDate(d.getDate()+1);day=d.getDate();month=d.getMonth()+1;year=d.getFullYear();}
+// ═══════════════════════════════════════════════
+var calY = new Date().getFullYear(), calM = new Date().getMonth(), calSel = todayStr();
+
+function calNav(d) { calM+=d; if(calM>11){calM=0;calY++;} else if(calM<0){calM=11;calY--;} renderCal(); }
+
+function renderCal() {
+  var months=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  document.getElementById('cal-title').textContent = months[calM]+' '+calY;
+  var first=new Date(calY,calM,1), last=new Date(calY,calM+1,0);
+  var dow=first.getDay(); if(dow===0) dow=7; dow--;
+  var g='';
+  ['Mo','Di','Mi','Do','Fr','Sa','So'].forEach(function(d){ g+='<div class="cal-dow">'+d+'</div>'; });
+  for(var i=0;i<dow;i++) g+='<div class="cal-day other"></div>';
+  for(var day=1;day<=last.getDate();day++) {
+    var ds=calY+'-'+pad(calM+1)+'-'+pad(day);
+    var d2=new Date(calY,calM,day);
+    var d2ms=d2.getTime();
+    var haEv=S.apts.some(function(a){
+      if(a.datetime.startsWith(ds)) return true;
+      var ad=new Date(a.datetime);
+      if(a.recurrence==='yearly'&&ad.getMonth()===calM&&ad.getDate()===day) return true;
+      if(a.recurrence==='weekly'&&ad.getDay()===d2.getDay()) return true;
+      if(a.endDatetime){ var ed=new Date(a.endDatetime); if(ad<=d2&&ed>=d2) return true; }
+      return false;
+    });
+    var isTd=ds===todayStr(), isSl=calSel===ds;
+    g+='<div class="cal-day'+(isTd?' today':'')+(haEv?' has-ev':'')+(isSl?' sel':'')+'" onclick="selectDay(\''+ds+'\')"><span>'+day+'</span><div class="cal-dot"></div></div>';
   }
-  if(!day){const wd={montag:1,dienstag:2,mittwoch:3,donnerstag:4,freitag:5,samstag:6,sonntag:0};for(const[k,v]of Object.entries(wd)){if(new RegExp('\\b'+k+'\\b','i').test(txt)){const d=nextWeekday(v);day=d.getDate();month=d.getMonth()+1;year=d.getFullYear();break;}}}
-  if(!day)return null;
-  if(!year)year=now.getFullYear();
-  if(!month)month=now.getMonth()+1;
-  const timeColon=txt.match(/(\d{1,2})[:\.](\d{2})\s*(?:uhr)?/i);
-  const timeUhr=txt.match(/\bum\s*(\d{1,2})\s*uhr\b/i)||txt.match(/(\d{1,2})\s*uhr\b/i);
-  if(timeColon){hour=parseInt(timeColon[1]);minute=parseInt(timeColon[2]);}
-  else if(timeUhr){hour=parseInt(timeUhr[1]);minute=0;}
-  if(hour===null)hour=9;
-  const dt=new Date(year,month-1,day,hour,minute,0,0);
-  return isNaN(dt.getTime())?null:dt;
-}
-function nextWeekday(wd){const d=new Date();const diff=(wd-d.getDay()+7)%7||7;d.setDate(d.getDate()+diff);return d;}
-function detectRecurrence(txt){
-  const l=txt.toLowerCase();
-  if(/jährlich|jedes jahr|geburtstag|jahrestag/.test(l))return'yearly';
-  if(/wöchentlich|jede woche/.test(l))return'weekly';
-  if(/monatlich|jeden monat/.test(l))return'monthly';
-  return null;
+  document.getElementById('cal-grid').innerHTML = g;
+  renderCalDetail();
+  document.getElementById('cal-sub').textContent = S.apts.length+' Termine';
 }
 
-// VOICE
-let recog=null,listening=false;
-function toggleVoice(){if(listening)stopVoice();else startVoice();}
-function startVoice(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){showToast('Bitte Text-Tab nutzen');setInputTab('text');return;}
-  recog=new SR();recog.lang='de-DE';recog.continuous=false;recog.interimResults=true;listening=true;
-  document.getElementById('vbtn').classList.add('on');document.getElementById('vring').classList.add('on');document.getElementById('waves').classList.add('on');
-  document.getElementById('vlbl').textContent='Höre zu…';
-  const vt=document.getElementById('vtxt');vt.style.display='block';vt.textContent='…';
-  recog.onresult=e=>{let txt='';for(let i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;vt.textContent=txt;if(e.results[e.results.length-1].isFinal){stopVoice();handleInput(txt);}};
-  recog.onerror=e=>{showToast('Fehler: '+e.error+' → Text nutzen');stopVoice();setInputTab('text');};
-  recog.onend=()=>stopVoice();recog.start();
-}
-function stopVoice(){
-  listening=false;if(recog){try{recog.stop();}catch(e){}}recog=null;
-  document.getElementById('vbtn').classList.remove('on');document.getElementById('vring').classList.remove('on');document.getElementById('waves').classList.remove('on');
-  document.getElementById('vlbl').textContent='Tippen zum Starten';
-}
+function selectDay(ds) { calSel=ds; renderCal(); }
 
-// ALARMS
-const QUOTES=[{q:'Ich fürchte nicht den Mann der 10.000 Tritte einmal geübt hat, sondern den der einen Tritt 10.000 Mal geübt hat.',a:'Bruce Lee'},{q:'Disziplin ist die Brücke zwischen Zielen und Leistungen.',a:'Jim Rohn'},{q:'Schmerz ist vorübergehend. Aufgeben ist für immer.',a:'Lance Armstrong'},{q:'Erfolg ist die Summe kleiner Anstrengungen, täglich wiederholt.',a:'Robert Collier'},{q:'Stärke kommt nicht aus körperlicher Kapazität, sondern aus einem unbeugsamen Willen.',a:'Mahatma Gandhi'},{q:'Das Geheimnis des Vorankommens ist anzufangen.',a:'Mark Twain'},{q:'Wasser ist weich. Aber mit genug Zeit durchbohrt es Stein.',a:'Bruce Lee'},{q:'Champions stehen auf wenn sie nicht wollen. Das ist der Unterschied.',a:'Unbekannt'},{q:'Die größte Glorie liegt nicht darin nie zu fallen, sondern jedes Mal wieder aufzustehen.',a:'Konfuzius'},{q:'Was dich nicht umbringt, macht dich stärker.',a:'Friedrich Nietzsche'}];
-const PTM={strict:['Kein Snooze. Kein Grund. Steh auf.','Niemand hat je bereut aufgestanden zu sein.','Disziplin ist eine Entscheidung. Triff sie.','Deine Konkurrenz trainiert gerade.'],calm:['Guten Morgen. Atme tief. Neuer Tag.','Sanft aufstehen. Achtsam starten.','Ein Schritt nach dem anderen.','Du musst nicht perfekt sein. Nur präsent.'],coach:['Das ist dein Tag! Nutze die erste Stunde!','1% besser als gestern reicht. Los!','Champions entscheiden sich täglich neu.','Dein Ziel wartet. Hol es dir!']};
-function getTodayQuote(){return QUOTES[new Date().getDate()%QUOTES.length];}
-function renderAlarms(){
-  const el=document.getElementById('alarm-content');const q=getTodayQuote();
-  let html=`<div style="background:var(--sur);border-radius:14px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px"><div style="font-size:10px;font-weight:600;color:var(--acc);margin-bottom:8px">📖 ZITAT DES TAGES</div><div style="font-size:14px;color:var(--txt2);font-style:italic;line-height:1.6">"${q.q}"</div><div style="font-size:11px;color:var(--txt3);margin-top:6px">— ${q.a}</div></div>`;
-  if(S.alarms.length===0)html+=`<div style="text-align:center;padding:24px;font-size:13px;color:var(--txt3)">Noch kein Wecker.</div>`;
-  else S.alarms.forEach((a,i)=>{
-    const msgs=PTM[a.style]||PTM.coach;const msg=msgs[new Date().getDate()%msgs.length];const q2=QUOTES[(new Date().getDate()+i+1)%QUOTES.length];
-    html+=`<div class="acard"><div class="acard-header"><div><div class="atime-big" onclick="editAlarm(${i})" title="Tippen zum Bearbeiten">${a.time}</div><div class="albl">${a.label}</div></div><div class="alarm-toggle"><button class="toggle-sw${a.active!==false?' on':''}" onclick="toggleAlarm(${i})"></button><button class="alarm-del" onclick="delAlarm(${i})">×</button></div></div>${a.active!==false?`<div class="aquote"><div class="aqtxt">"${q2.q}"</div><div class="aqauth">— ${q2.a}</div></div><div class="amsg">${msg}</div>`:'<div style="font-size:12px;color:var(--txt3);padding:6px 0">Wecker deaktiviert.</div>'}<div class="schips">${['strict','calm','coach'].map(s=>`<button class="schip${a.style===s?' active':''}" onclick="setAlStyle(${i},'${s}')">${s==='strict'?'💪 Streng':s==='calm'?'🧘 Ruhig':'🎯 Coach'}</button>`).join('')}</div></div>`;
+function renderCalDetail() {
+  var sel=new Date(calSel);
+  var evts=S.apts.filter(function(a){
+    if(a.datetime.startsWith(calSel)) return true;
+    var ad=new Date(a.datetime);
+    if(a.recurrence==='yearly'&&ad.getMonth()===sel.getMonth()&&ad.getDate()===sel.getDate()) return true;
+    if(a.recurrence==='weekly'&&ad.getDay()===sel.getDay()) return true;
+    if(a.endDatetime){ var ed=new Date(a.endDatetime); if(ad<=sel&&ed>=sel) return true; }
+    return false;
+  }).sort(function(a,b){ return new Date(a.datetime)-new Date(b.datetime); });
+  var h='<div class="cal-shdr">'+sel.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</div>';
+  if(evts.length===0) h+='<div style="text-align:center;padding:20px;font-size:13px;color:var(--txt3)">Keine Termine.</div>';
+  else evts.forEach(function(a){
+    var dt=new Date(a.datetime);
+    var isMulti=a.endDatetime&&a.endDatetime!==a.datetime;
+    var tstr=isMulti?'Mehrtägig':pad(dt.getHours())+':'+pad(dt.getMinutes());
+    var rl=a.recurrence==='yearly'?'🔁 Jährlich':a.recurrence==='weekly'?'🔁 Wöchentlich':a.recurrence==='monthly'?'🔁 Monatlich':'';
+    var endStr=isMulti?' bis '+new Date(a.endDatetime).toLocaleDateString('de-DE',{day:'numeric',month:'short'}):'';
+    h+='<div class="cal-ev"><div class="cal-ev-t" style="'+(isMulti?'font-size:11px;color:var(--amb);':'')+'">'+(isMulti?'📅':tstr)+'</div><div><div class="cal-ev-title">'+a.title+(endStr?'<span style="font-size:11px;color:var(--amb);margin-left:6px">'+endStr+'</span>':'')+'</div>'+(a.person?'<div class="cal-ev-sub">👤 '+a.person+'</div>':'')+(rl?'<div class="cal-ev-recur">'+rl+'</div>':'')+'</div></div>';
   });
-  html+=`<button class="aadd" onclick="openModal('alarmModal')">＋ Wecker hinzufügen</button>`;
+  document.getElementById('cal-detail').innerHTML = h;
+}
+
+// ═══════════════════════════════════════════════
+// VOICE
+// ═══════════════════════════════════════════════
+var recog = null, listening = false;
+
+function toggleVoice() { if(listening) stopVoice(); else startVoice(); }
+
+function startVoice() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) { showToast('Bitte Text-Tab nutzen'); setInputTab('text'); return; }
+  recog = new SR(); recog.lang='de-DE'; recog.continuous=false; recog.interimResults=true; listening=true;
+  document.getElementById('vbtn').classList.add('on');
+  document.getElementById('vring').classList.add('on');
+  document.getElementById('waves').classList.add('on');
+  document.getElementById('vlbl').textContent = 'Höre zu…';
+  var vt=document.getElementById('vtxt'); vt.style.display='block'; vt.textContent='…';
+  recog.onresult = function(e){ var txt=''; for(var i=0;i<e.results.length;i++) txt+=e.results[i][0].transcript; vt.textContent=txt; if(e.results[e.results.length-1].isFinal){ stopVoice(); handleInput(txt); } };
+  recog.onerror = function(e){ showToast('Fehler: '+e.error+' → Text nutzen'); stopVoice(); setInputTab('text'); };
+  recog.onend = function(){ stopVoice(); };
+  recog.start();
+}
+
+function stopVoice() {
+  listening=false;
+  if(recog){ try{ recog.stop(); }catch(e){} recog=null; }
+  document.getElementById('vbtn').classList.remove('on');
+  document.getElementById('vring').classList.remove('on');
+  document.getElementById('waves').classList.remove('on');
+  document.getElementById('vlbl').textContent = 'Tippen zum Starten';
+}
+
+// ═══════════════════════════════════════════════
+// ALARMS
+// ═══════════════════════════════════════════════
+var QUOTES=[{q:'Ich fürchte nicht den Mann der 10.000 Tritte einmal geübt hat, sondern den der einen Tritt 10.000 Mal geübt hat.',a:'Bruce Lee'},{q:'Disziplin ist die Brücke zwischen Zielen und Leistungen.',a:'Jim Rohn'},{q:'Schmerz ist vorübergehend. Aufgeben ist für immer.',a:'Lance Armstrong'},{q:'Erfolg ist die Summe kleiner Anstrengungen, täglich wiederholt.',a:'Robert Collier'},{q:'Stärke kommt nicht aus körperlicher Kapazität, sondern aus einem unbeugsamen Willen.',a:'Mahatma Gandhi'},{q:'Das Geheimnis des Vorankommens ist anzufangen.',a:'Mark Twain'},{q:'Wasser ist weich. Aber mit genug Zeit durchbohrt es Stein.',a:'Bruce Lee'},{q:'Champions stehen auf wenn sie nicht wollen. Das ist der Unterschied.',a:'Unbekannt'},{q:'Die größte Glorie liegt nicht darin nie zu fallen, sondern jedes Mal wieder aufzustehen.',a:'Konfuzius'},{q:'Was dich nicht umbringt, macht dich stärker.',a:'Friedrich Nietzsche'}];
+var PTM={strict:['Kein Snooze. Kein Grund. Steh auf.','Niemand hat je bereut aufgestanden zu sein.','Disziplin ist eine Entscheidung. Triff sie.','Deine Konkurrenz trainiert gerade.'],calm:['Guten Morgen. Atme tief. Neuer Tag.','Sanft aufstehen. Achtsam starten.','Ein Schritt nach dem anderen.','Du musst nicht perfekt sein. Nur präsent.'],coach:['Das ist dein Tag! Nutze die erste Stunde!','1% besser als gestern reicht. Los!','Champions entscheiden sich täglich neu.','Dein Ziel wartet. Hol es dir!']};
+
+function getTodayQuote(){ return QUOTES[new Date().getDate()%QUOTES.length]; }
+
+function renderAlarms() {
+  var el=document.getElementById('alarm-content'), q=getTodayQuote();
+  var html='<div style="background:var(--sur);border-radius:14px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px"><div style="font-size:10px;font-weight:600;color:var(--acc);margin-bottom:8px">📖 ZITAT DES TAGES</div><div style="font-size:14px;color:var(--txt2);font-style:italic;line-height:1.6">"'+q.q+'"</div><div style="font-size:11px;color:var(--txt3);margin-top:6px">— '+q.a+'</div></div>';
+  if(S.alarms.length===0) html+='<div style="text-align:center;padding:24px;font-size:13px;color:var(--txt3)">Noch kein Wecker.</div>';
+  else S.alarms.forEach(function(a,i){
+    var msgs2=PTM[a.style]||PTM.coach, msg=msgs2[new Date().getDate()%msgs2.length];
+    var q2=QUOTES[(new Date().getDate()+i+1)%QUOTES.length];
+    html+='<div class="acard"><div class="acard-hdr"><div><div class="atime" onclick="editAlarm('+i+')">'+a.time+'</div><div class="albl">'+a.label+'</div></div><div class="atoggle-row"><button class="toggle'+(a.active!==false?' on':'')+'" onclick="toggleAlarm('+i+')"></button><button class="adel" onclick="delAlarm('+i+')">×</button></div></div>'+(a.active!==false?'<div class="aquote"><div class="aqtxt">"'+q2.q+'"</div><div class="aqauth">— '+q2.a+'</div></div><div class="amsg">'+msg+'</div>':'<div style="font-size:12px;color:var(--txt3);padding:6px 0">Wecker deaktiviert.</div>')+'<div class="schips">'+['strict','calm','coach'].map(function(s){ return '<button class="schip'+(a.style===s?' active':'')+'" onclick="setAlStyle('+i+',\''+s+'\')">'+(s==='strict'?'💪 Streng':s==='calm'?'🧘 Ruhig':'🎯 Coach')+'</button>'; }).join('')+'</div></div>';
+  });
+  html+='<button class="aadd" onclick="openModal(\'alarmModal\')">＋ Wecker hinzufügen</button>';
   el.innerHTML=html;
 }
-function saveAlarm(){const t=document.getElementById('al-t').value;if(!t){showToast('Zeit wählen');return;}S.alarms.push({id:uid(),time:t,label:document.getElementById('al-l').value.trim()||'Wecker',style:document.getElementById('al-s').value,active:true});save();closeModal('alarmModal');renderAlarms();showToast('⏰ '+t);}
-function editAlarm(i){editAlarmIdx=i;document.getElementById('eal-t').value=S.alarms[i].time;document.getElementById('eal-l').value=S.alarms[i].label;openModal('editAlarmModal');}
-function updateAlarm(){const a=S.alarms[editAlarmIdx];if(!a)return;const t=document.getElementById('eal-t').value;if(t)a.time=t;const l=document.getElementById('eal-l').value.trim();if(l)a.label=l;save();closeModal('editAlarmModal');renderAlarms();showToast('✓ Aktualisiert');}
-function toggleAlarm(i){S.alarms[i].active=S.alarms[i].active===false?true:false;save();renderAlarms();}
-function delAlarm(i){if(confirm('Wecker löschen?')){S.alarms.splice(i,1);save();renderAlarms();}}
-function setAlStyle(i,s){S.alarms[i].style=s;save();renderAlarms();}
 
+function saveAlarm(){ var t=document.getElementById('al-t').value; if(!t){showToast('Zeit wählen');return;} S.alarms.push({id:uid(),time:t,label:document.getElementById('al-l').value.trim()||'Wecker',style:document.getElementById('al-s').value,active:true}); save(); closeModal('alarmModal'); renderAlarms(); showToast('⏰ '+t); }
+function editAlarm(i){ editAlarmIdx=i; document.getElementById('eal-t').value=S.alarms[i].time; document.getElementById('eal-l').value=S.alarms[i].label; openModal('editAlarmModal'); }
+function updateAlarm(){ var a=S.alarms[editAlarmIdx]; if(!a) return; var t=document.getElementById('eal-t').value; if(t) a.time=t; var l2=document.getElementById('eal-l').value.trim(); if(l2) a.label=l2; save(); closeModal('editAlarmModal'); renderAlarms(); showToast('✓ Aktualisiert'); }
+function toggleAlarm(i){ S.alarms[i].active=S.alarms[i].active===false?true:false; save(); renderAlarms(); }
+function delAlarm(i){ if(confirm('Wecker löschen?')){ S.alarms.splice(i,1); save(); renderAlarms(); } }
+function setAlStyle(i,s){ S.alarms[i].style=s; save(); renderAlarms(); }
+
+// ═══════════════════════════════════════════════
 // STATS
-function renderStats(){
-  const el=document.getElementById('stats-content');
-  const ag=S.goals.filter(g=>!g.archived);
-  const doneTodos=S.todos.filter(t=>t.done).length;
-  const wdays=['Mo','Di','Mi','Do','Fr','Sa','So'];
-  const weekData=[];
-  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());weekData.push({day:wdays[d.getDay()===0?6:d.getDay()-1],cnt:S.todos.filter(t=>t.createdDate===ds&&t.done).length});}
-  const maxB=Math.max(...weekData.map(w=>w.cnt),1);
-  let bars='';weekData.forEach(w=>{bars+=`<div class="bar-col"><div class="bar" style="height:${Math.max(3,Math.round(w.cnt/maxB*54))}px"></div><div class="bar-lbl">${w.day}</div></div>`;});
-  let goalStats='';
-  ag.forEach(g=>{const hist=S.weeklyHistory[g.id]||[];const reps=g.isDaily?7:g.reps||0,done=g.weekChecks||0;const aD=hist.reduce((a,h)=>a+h.done,0)+done,aR=hist.reduce((a,h)=>a+h.reps,0)+reps;const pct=aR>0?Math.round(aD/aR*100):0;goalStats+=`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:15px">${g.emoji||'🎯'}</span><span style="font-size:13px;flex:1;color:var(--txt)">${g.title}</span><span style="font-size:13px;font-weight:600;color:${pct>=80?'var(--grn)':pct>=50?'var(--acc)':'var(--red)'}">${aR>0?pct+'%':'–'}</span></div>`;});
-  el.innerHTML=`<div class="stat-row2"><div class="stat-big" style="flex:1"><div class="stat-big-n" style="color:var(--acc)">${S.goals.length}</div><div style="font-size:12px;color:var(--txt3);margin-top:4px">Ziele gesamt</div></div><div style="flex:1;display:flex;flex-direction:column;gap:8px"><div class="stat2"><div style="font-size:20px;font-weight:700">${doneTodos}</div><div style="font-size:10px;color:var(--txt3);margin-top:2px">To-Dos erledigt</div></div><div class="stat2"><div style="font-size:20px;font-weight:700">${S.apts.length}</div><div style="font-size:10px;color:var(--txt3);margin-top:2px">Termine</div></div></div></div><div class="stat-big"><div class="tips-lbl" style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:1px">Aktivität – 7 Tage</div><div class="bar-chart">${bars}</div></div>${ag.length>0?`<div class="stat-big"><div class="tips-lbl" style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Ziel-Erfolgsquoten</div>${goalStats}</div>`:''}`;
+// ═══════════════════════════════════════════════
+function renderStats() {
+  var el=document.getElementById('stats-content');
+  var ag=S.goals.filter(function(g){ return !g.archived; });
+  var doneTodos=S.todos.filter(function(t){ return t.done; }).length;
+  var wdays=['Mo','Di','Mi','Do','Fr','Sa','So'];
+  var weekData=[];
+  for(var i=6;i>=0;i--){ var d=new Date(); d.setDate(d.getDate()-i); var ds=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); weekData.push({day:wdays[d.getDay()===0?6:d.getDay()-1],cnt:S.todos.filter(function(t){ return t.createdDate===ds&&t.done; }).length}); }
+  var maxB=Math.max.apply(null,weekData.map(function(w){ return w.cnt; }).concat([1]));
+  var bars='';
+  weekData.forEach(function(w){ bars+='<div class="barcol"><div class="bar" style="height:'+Math.max(3,Math.round(w.cnt/maxB*54))+'px"></div><div class="barlbl">'+w.day+'</div></div>'; });
+  var goalStats='';
+  ag.forEach(function(g){ var hist=S.weeklyHistory[g.id]||[]; var reps=g.isDaily?7:(g.reps||0),done=g.weekChecks||0; var aD=hist.reduce(function(a,h){ return a+h.done; },0)+done,aR=hist.reduce(function(a,h){ return a+h.reps; },0)+reps; var pct3=aR>0?Math.round(aD/aR*100):0; goalStats+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:15px">'+g.emoji+'</span><span style="font-size:13px;flex:1;color:var(--txt)">'+g.title+'</span><span style="font-size:13px;font-weight:600;color:'+(pct3>=80?'var(--grn)':pct3>=50?'var(--acc)':'var(--red)')+'">'+( aR>0?pct3+'%':'–')+'</span></div>'; });
+  el.innerHTML='<div class="stat2row"><div class="stat-big" style="flex:1"><div class="stat-big-n" style="color:var(--acc)">'+S.goals.length+'</div><div style="font-size:12px;color:var(--txt3);margin-top:4px">Ziele gesamt</div></div><div style="flex:1;display:flex;flex-direction:column;gap:8px"><div class="stat2"><div style="font-size:20px;font-weight:700">'+doneTodos+'</div><div style="font-size:10px;color:var(--txt3);margin-top:2px">To-Dos erledigt</div></div><div class="stat2"><div style="font-size:20px;font-weight:700">'+S.apts.length+'</div><div style="font-size:10px;color:var(--txt3);margin-top:2px">Termine</div></div></div></div><div class="stat-big"><div style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:1px">Aktivität – 7 Tage</div><div class="barchart">'+bars+'</div></div>'+(ag.length>0?'<div class="stat-big"><div style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Ziel-Erfolgsquoten</div>'+goalStats+'</div>':'');
 }
 
-// MODALS
-function openModal(id){document.getElementById(id).classList.add('show');}
-function closeModal(id){document.getElementById(id).classList.remove('show');}
-document.querySelectorAll('.modal-bg').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');});});
-
+// ═══════════════════════════════════════════════
 // TIPS
-function getTips(title){
-  const t=(title||'').toLowerCase();
-  const all={tr:[{icon:'💪',text:'Progressive Overload: Jede Woche 5% mehr.'},{icon:'🧠',text:'Warm-Up nicht überspringen – 5 Min reichen.'},{icon:'💧',text:'500ml Wasser vor dem Training.'},{icon:'😴',text:'Muskeln wachsen nachts – Schlaf ist Training.'}],fi:[{icon:'🧠',text:'50/30/20: 50% Bedarf, 30% Wünsche, 20% Sparen.'},{icon:'🔄',text:'Automatisiere: Dauerauftrag nach Gehaltseingang.'},{icon:'📋',text:'30 Tage alle Ausgaben tracken.'},{icon:'🚀',text:'Sag "500 Euro gespart" zum Aktualisieren.'}],le:[{icon:'🧠',text:'Aktives Recall schlägt passives Lesen.'},{icon:'🔄',text:'Spaced Repetition: Heute, morgen, in 3 Tagen.'},{icon:'✏️',text:'Feynman: Erkläre es als wärst du der Lehrer.'},{icon:'⏱️',text:'25 Min Fokus, 5 Min Pause.'}],di:[{icon:'🎯',text:'Identität: "Ich bin jemand der täglich trainiert."'},{icon:'⏱️',text:'2-Minuten-Regel: Unter 2 Min → sofort.'},{icon:'🌍',text:'Gute Gewohnheiten leichter machen als schlechte.'},{icon:'📊',text:'Was gemessen wird, verbessert sich.'}],df:[{icon:'📈',text:'1% täglich = 37x besser nach einem Jahr.'},{icon:'🏃',text:'Konsistenz schlägt Intensität.'},{icon:'🔥',text:'Im Plateau durchhalten – der Durchbruch kommt.'},{icon:'🤝',text:'Teile dein Ziel – Accountability hilft.'}]};
-  if(/train|sport|gym|lauf|fitness|liegest|kniebeugen|bein|ausdauer/.test(t))return all.tr;
-  if(/spar|geld|€|euro|finanz/.test(t))return all.fi;
-  if(/lern|buch|kurs|studier|sprach/.test(t))return all.le;
-  if(/diszip|fokus|gewohnheit|produktiv/.test(t))return all.di;
+// ═══════════════════════════════════════════════
+function getTips(title) {
+  var t=(title||'').toLowerCase();
+  var all={tr:[{icon:'💪',text:'Progressive Overload: Jede Woche 5% mehr.'},{icon:'🧠',text:'Warm-Up nicht überspringen – 5 Min reichen.'},{icon:'💧',text:'500ml Wasser vor dem Training.'},{icon:'😴',text:'Muskeln wachsen nachts – Schlaf ist Training.'}],fi:[{icon:'🧠',text:'50/30/20: 50% Bedarf, 30% Wünsche, 20% Sparen.'},{icon:'🔄',text:'Automatisiere: Dauerauftrag nach Gehaltseingang.'},{icon:'📋',text:'30 Tage alle Ausgaben tracken.'},{icon:'🚀',text:'Sag "500 Euro gespart" zum Aktualisieren.'}],le:[{icon:'🧠',text:'Aktives Recall schlägt passives Lesen.'},{icon:'🔄',text:'Spaced Repetition: Heute, morgen, in 3 Tagen.'},{icon:'✏️',text:'Feynman: Erkläre es als wärst du der Lehrer.'},{icon:'⏱️',text:'25 Min Fokus, 5 Min Pause.'}],df:[{icon:'📈',text:'1% täglich = 37x besser nach einem Jahr.'},{icon:'🏃',text:'Konsistenz schlägt Intensität.'},{icon:'🔥',text:'Im Plateau durchhalten.'},{icon:'🤝',text:'Teile dein Ziel – Accountability hilft.'}]};
+  if(/train|sport|gym|lauf|fitness/.test(t)) return all.tr;
+  if(/spar|geld|€|euro|finanz/.test(t)) return all.fi;
+  if(/lern|buch|kurs|sprach/.test(t)) return all.le;
   return all.df;
 }
 
-// UTILS
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
-function guessCat(t){const l=t.toLowerCase();if(/spar|geld|€|euro/.test(l))return'Finanzen';if(/sport|gym|lauf|fit|train/.test(l))return'Sport';if(/lern|buch/.test(l))return'Lernen';return'Allgemein';}
-function guessEmoji(t,isMoney){if(isMoney)return'💰';const l=t.toLowerCase();if(/lauf|sport|gym|train|fitness/.test(l))return'🏋️';if(/lern|buch/.test(l))return'📚';if(/diszip|fokus/.test(l))return'🎯';if(/gesund|ernähr/.test(l))return'🥗';if(/joggen/.test(l))return'🏃';return'🎯';}
-function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500);}
-function clearAllData(){if(confirm('Wirklich alle Daten löschen?')){S={goals:[],todos:[],apts:[],alarms:[],weeklyHistory:{}};save();renderOverview();showToast('Daten gelöscht');}}
+// ═══════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.mbg').forEach(function(m){ m.addEventListener('click',function(e){ if(e.target===m) m.classList.remove('show'); }); });
 
-// SEED
-function seed(){
-  if(localStorage.getItem('fm8s'))return;
-  const wk=getWeekKey(),today=todayStr();
-  const tom=new Date();tom.setDate(tom.getDate()+1);tom.setHours(14,30,0,0);
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
+function guessCat(t){ var l=t.toLowerCase(); if(/spar|geld|€|euro/.test(l)) return 'Finanzen'; if(/sport|gym|lauf|fit|train/.test(l)) return 'Sport'; if(/lern|buch/.test(l)) return 'Lernen'; return 'Allgemein'; }
+function guessEmoji(t,isMoney){ if(isMoney) return '💰'; var l=t.toLowerCase(); if(/lauf|sport|gym|train|fitness/.test(l)) return '🏋️'; if(/lern|buch/.test(l)) return '📚'; if(/diszip|fokus/.test(l)) return '🎯'; if(/gesund|ernähr/.test(l)) return '🥗'; return '🎯'; }
+function showToast(msg){ var el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(function(){ el.classList.remove('show'); }, 2500); }
+function clearAllData(){ if(confirm('Wirklich alle Daten löschen?')){ S={goals:[],todos:[],apts:[],alarms:[],weeklyHistory:{}}; save(); renderOverview(); showToast('Daten gelöscht'); } }
+
+// ═══════════════════════════════════════════════
+// SEED DATA
+// ═══════════════════════════════════════════════
+function seed() {
+  if(localStorage.getItem('fm9s')) return;
+  var wk=getWeekKey(), today=todayStr();
+  var tom=new Date(); tom.setDate(tom.getDate()+1); tom.setHours(14,30,0,0);
   S.goals=[
     {id:uid(),title:'5x die Woche trainieren',category:'Sport',emoji:'🏋️',reps:5,weekChecks:2,lastWeekKey:wk,archived:false,isMoney:false,isDaily:false,created:Date.now()},
     {id:uid(),title:'10.000 € sparen',category:'Finanzen',emoji:'💰',reps:0,weekChecks:0,lastWeekKey:wk,archived:false,isMoney:true,isDaily:false,targetAmount:10000,savedAmount:2400,created:Date.now()}
@@ -1441,12 +1116,16 @@ function seed(){
   ];
   S.apts=[
     {id:uid(),title:'Zahnarzt',datetime:tom.toISOString(),person:'Dr. Müller',created:Date.now()},
-    {id:uid(),title:'Geburtstag Mama',datetime:new Date(new Date().getFullYear(),5,15,0,0,0).toISOString(),recurrence:'yearly',created:Date.now()}
+    {id:uid(),title:'Urlaub Mallorca',datetime:new Date(new Date().getFullYear(),6,10,8,0,0).toISOString(),endDatetime:new Date(new Date().getFullYear(),6,20,23,59,0).toISOString(),created:Date.now()}
   ];
   S.alarms=[{id:uid(),time:'06:30',label:'Morgen-Routine',style:'coach',active:true}];
-  save();localStorage.setItem('fm8s','1');
+  save(); localStorage.setItem('fm9s','1');
 }
-load();seed();renderOverview();
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+load(); seed(); renderOverview();
 </script>
 </body>
 </html>
