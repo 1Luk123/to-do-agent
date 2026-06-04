@@ -691,18 +691,63 @@ async function handleInput(txt) {
 }
 
 async function aiProcess(txt) {
-  // Show typing
-  var msgs = document.getElementById('aiMsgs');
-  var typing = document.createElement('div');
-  typing.className = 'msg ai'; typing.id = 'typing_ind';
-  typing.innerHTML = '<div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>';
-  msgs.appendChild(typing); msgs.scrollTop = msgs.scrollHeight;
+  showTyping();
 
   var today = new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  var todayIso = todayStr();
   var goalTitles = S.goals.filter(function(g){return !g.archived;}).map(function(g){return g.title;}).join(', ') || 'keine';
   var todoTitles = S.todos.filter(function(t){return !t.done;}).map(function(t){return t.title;}).join(', ') || 'keine';
+  var aptTitles = S.apts.filter(function(a){return a.datetime.startsWith(todayIso);}).map(function(a){return a.title;}).join(', ') || 'keine';
 
-  var systemPrompt = 'Du bist FlowMind, ein persönlicher Alltags-Assistent. Heute ist '+today+'.\n\nAktive Ziele: '+goalTitles+'\nOffene To-Dos: '+todoTitles+'\n\nAnalysiere die Eingabe und antworte NUR mit einem JSON-Objekt (kein Markdown, keine Backticks):\n{"type":"todo"|"goal"|"appointment"|"checkoff"|"money_update"|"query"|"chat","title":"bereinigter Titel","reply":"kurze Antwort auf Deutsch","date":"YYYY-MM-DD oder null","endDate":"YYYY-MM-DD oder null","time":"HH:MM oder null","person":"Name oder null","recurrence":"yearly"|"weekly"|"monthly"|null,"reps":Zahl|null,"isDaily":true|false,"isMoney":true|false,"targetAmount":Zahl|null,"amount":Zahl|null,"matchedTitle":"passendes Element zum Abhaken oder null"}\n\ntodo=einmalige Aufgabe(abholen,kaufen,anrufen,waschen)\ngoal=wiederkehrendes Ziel/Gewohnheit/Sparziel\nappointment=Termin mit Datum/Zeit(Urlaub,Meeting,Prüfung,Geburtstag,Reise)\ncheckoff=Nutzer meldet Erledigtes\nmoney_update=gesparte Euro\nquery=Frage nach heutigem Plan\nchat=alles andere';
+  var systemPrompt = [
+    'Du bist FlowMind, ein smarter persönlicher Alltags-Assistent. Heute ist '+today+'.',
+    '',
+    'Kontext des Nutzers:',
+    '- Aktive Ziele: '+goalTitles,
+    '- Offene To-Dos heute: '+todoTitles,
+    '- Heutige Termine: '+aptTitles,
+    '',
+    'Deine Aufgabe: Analysiere die Eingabe des Nutzers präzise und antworte AUSSCHLIESSLICH mit einem validen JSON-Objekt.',
+    'Kein Markdown, keine Erklärung, keine Backticks. Nur das JSON.',
+    '',
+    'JSON-Schema:',
+    '{',
+    '  "type": "todo" | "goal" | "appointment" | "checkoff" | "money_update" | "query" | "chat",',
+    '  "title": "sauber bereinigter deutscher Titel ohne Datum/Uhrzeit/Namen",',
+    '  "reply": "kurze motivierende Antwort auf Deutsch, max 1-2 Sätze",',
+    '  "date": "YYYY-MM-DD oder null",',
+    '  "endDate": "YYYY-MM-DD oder null (nur bei mehrtägigen Terminen)",',
+    '  "time": "HH:MM oder null",',
+    '  "person": "Vorname/Nachname der erwähnten Person oder null",',
+    '  "recurrence": "yearly" | "weekly" | "monthly" | null,',
+    '  "reps": Ganzzahl | null (wie oft pro Woche bei Zielen, z.B. 5 für "5x die Woche"),',
+    '  "isDaily": true | false (true wenn täglich gemeint ist),',
+    '  "isMoney": true | false,',
+    '  "targetAmount": Zahl | null (Sparziel-Betrag in Euro),',
+    '  "amount": Zahl | null (bei money_update: der gemeldete Betrag in Euro),',
+    '  "matchedTitle": "exakter Titel des passenden Ziels/To-Dos zum Abhaken oder null"',
+    '}',
+    '',
+    'Typenzuordnung (sehr wichtig, denke genau nach):',
+    '- todo: EINMALIGE konkrete Aufgabe für heute/bald. Beispiele: abholen, kaufen, anrufen, waschen, aufräumen, Paket aufgeben, Schwester vom Training holen, Arztrezept holen, Mama anrufen.',
+    '- goal: WIEDERKEHRENDES Ziel oder Gewohnheit oder Sparziel. Beispiele: 5x die Woche trainieren, täglich meditieren, 10000 Euro sparen, jeden Morgen laufen.',
+    '- appointment: Termin mit DATUM und/oder UHRZEIT. Beispiele: Zahnarzt Montag 14 Uhr, Prüfung am 3.7., Urlaub 10.7.-20.7., Geburtstag Papa jährlich, Geschäftstermin Dienstag 10 Uhr mit Herrn Müller.',
+    '- checkoff: Nutzer meldet dass er etwas ERLEDIGT hat. Beispiele: ich habe trainiert, Wäsche ist fertig, war beim Arzt, habe eingekauft.',
+    '- money_update: Nutzer meldet gesparte oder beiseite gelegte Euro.',
+    '- query: Nutzer fragt was heute ansteht oder möchte eine Übersicht.',
+    '- chat: Alles andere (Fragen, Feedback, allgemeine Unterhaltung).',
+    '',
+    'Wichtige Regeln:',
+    '- Bei "Ich muss X" oder "Ich soll X" → fast immer todo',
+    '- Bei Personennamen + abholen/treffen/besuchen → todo',
+    '- Bei konkretem Datum+Uhrzeit → appointment',
+    '- Bei "X mal die Woche" oder "täglich" → goal mit reps/isDaily',
+    '- Bei Geldbeträgen + sparen → goal mit isMoney:true und targetAmount',
+    '- Bei "ich habe X gemacht/erledigt" → checkoff, matchedTitle auf passendes Ziel/Todo setzen',
+    '- Für matchedTitle: durchsuche Ziele und To-Dos nach dem besten Treffer',
+    '- date immer im Format YYYY-MM-DD, time immer HH:MM',
+    '- Antworte auf Deutsch, motivierend und kurz'
+  ].join('\n');
 
   try {
     var resp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -710,29 +755,52 @@ async function aiProcess(txt) {
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 400,
+        max_tokens: 500,
         system: systemPrompt,
         messages: [{role:'user',content:txt}]
       })
     });
-    var data = await resp.json();
-    var raw = (data.content && data.content[0] && data.content[0].text) || '{}';
-    var parsed;
-    try { parsed = JSON.parse(raw.replace(/```json|```/g,'').trim()); }
-    catch(e) { parsed = null; }
 
-    var ind = document.getElementById('typing_ind');
-    if(ind) ind.remove();
+    removeTyping();
+
+    if(!resp.ok) { classifyFallback(txt); return; }
+
+    var data = await resp.json();
+    var raw = (data.content && data.content[0] && data.content[0].text) || '';
+    // Strip any accidental markdown
+    var cleaned = raw.replace(/```json/g,'').replace(/```/g,'').trim();
+
+    var parsed;
+    try { parsed = JSON.parse(cleaned); }
+    catch(e) {
+      // Try to extract JSON from text
+      var match = cleaned.match(/\{[\s\S]*\}/);
+      try { parsed = match ? JSON.parse(match[0]) : null; }
+      catch(e2) { parsed = null; }
+    }
 
     if(!parsed) { classifyFallback(txt); return; }
     if(parsed.reply) showAI('ai', parsed.reply);
     executeAction(parsed, txt);
 
   } catch(err) {
-    var ind2 = document.getElementById('typing_ind');
-    if(ind2) ind2.remove();
+    removeTyping();
+    // Network error or API unavailable - use fallback
     classifyFallback(txt);
   }
+}
+
+function showTyping() {
+  var msgs = document.getElementById('aiMsgs');
+  var d = document.createElement('div');
+  d.className = 'msg ai'; d.id = 'typing_ind';
+  d.innerHTML = '<div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>';
+  msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  var t = document.getElementById('typing_ind');
+  if(t) t.remove();
 }
 
 function executeAction(p, originalTxt) {
